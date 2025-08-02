@@ -1,0 +1,11 @@
+*.env.yaml
+*.tfstate.backup
+*.tfvars
+*.terraform
+*.terraform.lock.hcl
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+.terraform.tfstate.lock.info.backup
+.terraform.tfstate.lock.info.backup.backup
+.terraform.tfstate.lock.info.backup.backup.backup
+*.terragrunt-*
