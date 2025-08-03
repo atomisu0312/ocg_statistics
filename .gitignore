@@ -9,3 +9,6 @@
 .terraform.tfstate.lock.info.backup.backup
 .terraform.tfstate.lock.info.backup.backup.backup
 *.terragrunt-*
+
+act_secretfile
+.secrets

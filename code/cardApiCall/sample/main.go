@@ -20,7 +20,7 @@ func HandleRequest(ctx context.Context, event json.RawMessage) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("Hello %s!", input.Name), nil
+	return fmt.Sprintf("name: %s", input.Name), nil
 }
 
 func main() {
