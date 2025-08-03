@@ -1,0 +1,8 @@
+# Sample variable values for rdb_neon module
+# Rename this file to terraform.tfvars for local development
+
+neon_api_key      = "your_neon_api_key_here"
+neon_project_name = "ocg-statistics-db"
+region            = "ap-northeast-1"
+project           = "ocg-statistics"
+tag_base          = "ocg-statistics-dev"
