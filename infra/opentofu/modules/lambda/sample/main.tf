@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "lambda_sample" {
-  function_name = var.lambda_sample_name
+  function_name = var.lambda_name
   package_type  = "Image"
   role          = var.role_arn
   image_uri     = var.image_uri

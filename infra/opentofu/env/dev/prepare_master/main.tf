@@ -21,7 +21,7 @@ locals {
 module "lambda_sample" {
   source = "../../../modules/lambda/sample"
 
-  lambda_sample_name = var.lambda_sample_name
+  lambda_name = var.lambda_sample_name
   tag_base = var.tag_base
   role_arn = data.terraform_remote_state.base.outputs.lambda_exec_role_arn
   image_uri = local.image_uri

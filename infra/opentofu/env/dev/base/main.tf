@@ -28,6 +28,6 @@ module "lambda_exec_role" {
 module "ecr_sample" {
   source = "../../../modules/ecr/sample"
 
-  ecr_lambda_sample_repo_name = var.ecr_lambda_sample_repo_name
+  repo_name = var.ecr_lambda_sample_repo_name
   tag_base                    = var.tag_base
 }

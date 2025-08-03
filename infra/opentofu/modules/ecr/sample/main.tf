@@ -1,5 +1,5 @@
-resource "aws_ecr_repository" "lambda_sample" {
-  name                 = var.ecr_lambda_sample_repo_name
+resource "aws_ecr_repository" "ecr" {
+  name                 = var.repo_name
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {

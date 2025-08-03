@@ -1,4 +1,4 @@
-variable "ecr_lambda_sample_repo_name" {
+variable "repo_name" {
   description = "The name of the ECR repository for the Lambda sample."
   type        = string
 }
