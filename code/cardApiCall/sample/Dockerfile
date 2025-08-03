@@ -2,6 +2,7 @@ FROM golang:1.23.5 AS build
 WORKDIR /cardApiCall
 # Copy dependencies list
 COPY go.mod go.sum ./
+RUN go mod download
 # Build with optional lambda.norpc tag
 COPY main.go .
 RUN go build -tags lambda.norpc -o main main.go
