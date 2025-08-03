@@ -2,15 +2,25 @@ package main
 
 import (
 	"context"
-	"os/user"
+	"encoding/json"
 
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func HandleRequest(ctx context.Context, user user.User) (string, error) {
-	return fmt.Sprintf("Hello %s!", user.Name), nil
+type Input struct {
+	Name string `json:"name"`
+}
+
+func HandleRequest(ctx context.Context, event json.RawMessage) (string, error) {
+
+	var input Input
+	if err := json.Unmarshal(event, &input); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("Hello %s!", input.Name), nil
 }
 
 func main() {
