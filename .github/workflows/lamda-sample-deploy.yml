@@ -45,7 +45,7 @@ jobs:
       run: |
         IMAGE_URI_TIMESTAMP="$ECR_REGISTRY/$IMAGE_NAME:$TIMESTAMP"
         IMAGE_URI_LATEST="$ECR_REGISTRY/$IMAGE_NAME:latest"
-        docker build --platform linux/arm64 -t "$IMAGE_URI_TIMESTAMP" -t "$IMAGE_URI_LATEST" -f code/cardApiCall/sample/Dockerfile ./code/cardApiCall/sample
+        docker build -t "$IMAGE_URI_TIMESTAMP" -t "$IMAGE_URI_LATEST" -f code/cardApiCall/sample/Dockerfile ./code/cardApiCall/sample
         docker push "$IMAGE_URI_TIMESTAMP"
         docker push "$IMAGE_URI_LATEST"
         echo "::set-output name=image_uri::$IMAGE_URI_TIMESTAMP"

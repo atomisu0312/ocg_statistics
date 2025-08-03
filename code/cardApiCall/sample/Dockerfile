@@ -1,4 +1,6 @@
 FROM golang:1.23.5 AS build
+ENV GOOS=linux
+ENV GOARCH=arm64
 WORKDIR /cardApiCall
 # Copy dependencies list
 COPY go.mod go.sum ./
