@@ -76,5 +76,7 @@ jobs:
     - name: Update Lambda function
       env:
         AWS_PAGER: ""
+        ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+        IMAGE_NAME: ${{ env.ECR_REPOSITORY }}
       run: |
-        aws lambda update-function-code --function-name ${{ env.LAMBDA_FUNCTION_NAME }} --image-uri ${{ needs.build-and-push.outputs.image_uri }}
+        aws lambda update-function-code --function-name ${{ env.LAMBDA_FUNCTION_NAME }} --image-uri $ECR_REGISTRY/$IMAGE_NAME:latest
