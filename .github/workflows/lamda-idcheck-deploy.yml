@@ -1,4 +1,4 @@
-name: OCG Card API Docker CI
+name: OCG Card API Docker CI (for ID Check)
 
 on:
   push:

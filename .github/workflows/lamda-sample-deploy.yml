@@ -1,4 +1,4 @@
-name: OCG Card API Docker CI
+name: OCG Card API Docker CI (for Sample)
 
 on:
   push:
@@ -12,6 +12,7 @@ env:
   # ECRリポジトリ名とLambda関数名をSecretsから読み込む
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME_SAMPLE }}
   LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME_SAMPLE }}
+  IMAGE_WORKDIR: ./code/cardApiCall/sample
 
 jobs:
   build-and-push:
@@ -45,7 +46,7 @@ jobs:
       run: |
         IMAGE_URI_TIMESTAMP="$ECR_REGISTRY/$IMAGE_NAME:$TIMESTAMP"
         IMAGE_URI_LATEST="$ECR_REGISTRY/$IMAGE_NAME:latest"
-        docker build -t "$IMAGE_URI_TIMESTAMP" -t "$IMAGE_URI_LATEST" -f code/cardApiCall/sample/Dockerfile ./code/cardApiCall/sample
+        docker build -t "$IMAGE_URI_TIMESTAMP" -t "$IMAGE_URI_LATEST" -f ${{ env.IMAGE_WORKDIR }}/Dockerfile ${{ env.IMAGE_WORKDIR }}
         docker push "$IMAGE_URI_TIMESTAMP"
         docker push "$IMAGE_URI_LATEST"
         echo "image_uri=$IMAGE_URI_TIMESTAMP" >> $GITHUB_OUTPUT
