@@ -31,3 +31,10 @@ module "ecr_sample" {
   repo_name = var.ecr_lambda_sample_repo_name
   tag_base                    = var.tag_base
 }
+
+module "ecr_idcheck" {
+  source = "../../../modules/ecr/idcheck"
+
+  repo_name = var.ecr_lambda_idcheck_repo_name
+  tag_base                    = var.tag_base
+}

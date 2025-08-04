@@ -22,3 +22,8 @@ variable "lambda_sample_name" {
   description = "The name of the Lambda function."
   type        = string
 }
+
+variable "lambda_idcheck_name" {
+  description = "The name of the Lambda function."
+  type        = string
+}

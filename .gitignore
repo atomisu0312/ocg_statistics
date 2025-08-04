@@ -12,3 +12,4 @@
 
 act_secretfile
 .secrets
+.env

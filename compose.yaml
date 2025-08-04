@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  cardapicall_sample:
+    build:
+      context: ./code/cardApiCall/sample
+      dockerfile: Dockerfile
+    platform: linux/arm64
+    container_name: ocg_cardapicall_sample
+    ports:
+      - "9000:8080"
+    entrypoint: /usr/local/bin/aws-lambda-rie
+    command: ./main
+    restart: unless-stopped
+  cardapicall_idcheck:
+    build:
+      context: ./code/cardApiCall/cardidcheck
+      dockerfile: Dockerfile
+    platform: linux/arm64
+    container_name: ocg_cardapicall_idcheck
+    ports:
+      - "9001:8080"
+    entrypoint: /usr/local/bin/aws-lambda-rie
+    command: ./main
+    restart: unless-stopped
