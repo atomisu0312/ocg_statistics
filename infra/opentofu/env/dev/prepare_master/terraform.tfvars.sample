@@ -6,3 +6,7 @@ region           = "ap-northeast-1"
 tag_base         = "ocg-statistics-dev"
 ecr_repo_name    = "ocg-sample-repo"
 lambda_sample_name = "ocg-sample-lambda"
+parameter_current_id_name = "/ocg-statistics-dev/currentid"
+parameter_current_id_value = "1" # 1
+parameter_delta_id_name = "/ocg-statistics-dev/deltaid"
+parameter_delta_id_value = "100" # 100

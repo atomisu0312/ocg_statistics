@@ -36,3 +36,19 @@ module "lambda_idcheck" {
   role_arn = data.terraform_remote_state.base.outputs.lambda_exec_role_arn
   image_uri = local.image_uri_idcheck
 }
+
+module "parameter_current_id" {
+  source = "../../../modules/parameterstore/currentid"
+
+  parameter_name = var.parameter_current_id_name
+  parameter_value = var.parameter_current_id_value
+  tag_base = var.tag_base
+}
+
+module "parameter_delta_id" {
+  source = "../../../modules/parameterstore/deltaid"
+
+  parameter_name = var.parameter_delta_id_name
+  parameter_value = var.parameter_delta_id_value
+  tag_base = var.tag_base
+}

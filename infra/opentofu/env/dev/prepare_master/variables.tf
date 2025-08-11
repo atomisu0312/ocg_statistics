@@ -27,3 +27,22 @@ variable "lambda_idcheck_name" {
   description = "The name of the Lambda function."
   type        = string
 }
+variable "parameter_current_id_name" {
+  description = "The name of the SSM parameter."
+  type        = string 
+}
+
+variable "parameter_current_id_value" {
+  description = "The value of the SSM parameter."
+  type        = string
+}
+
+variable "parameter_delta_id_name" {
+  description = "The name of the SSM parameter."
+  type        = string 
+}
+
+variable "parameter_delta_id_value" {
+  description = "The value of the SSM parameter."
+  type        = string
+}
