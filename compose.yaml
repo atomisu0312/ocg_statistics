@@ -5,7 +5,6 @@ services:
     build:
       context: ./code/cardApiCall/sample
       dockerfile: Dockerfile
-    platform: linux/arm64
     container_name: ocg_cardapicall_sample
     ports:
       - "9000:8080"
@@ -16,7 +15,6 @@ services:
     build:
       context: ./code/cardApiCall/cardidcheck
       dockerfile: Dockerfile
-    platform: linux/arm64
     container_name: ocg_cardapicall_idcheck
     ports:
       - "9001:8080"
