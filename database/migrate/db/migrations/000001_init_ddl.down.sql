@@ -1,6 +1,6 @@
 -- created by following command
 -- migrate create -ext sql -dir db/migrations -seq init_ddl
-
+DROP TABLE IF EXISTS ritual_monsters;
 DROP TABLE IF EXISTS xyz_monsters;
 DROP TABLE IF EXISTS synchro_monsters;
 DROP TABLE IF EXISTS fusion_monsters;
