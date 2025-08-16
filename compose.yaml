@@ -21,3 +21,23 @@ services:
     entrypoint: /usr/local/bin/aws-lambda-rie
     command: ./main
     restart: unless-stopped
+  ocg_db_local:
+    image: postgres:14.7-alpine
+    container_name: 'ocg-db-local'
+    ports:
+      - '5555:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./database/localsetup:/docker-entrypoint-initdb.d
+      - postgres_volume_ocg:/var/lib/postgresql/data
+    networks:
+      - ocg-network
+volumes:
+  postgres_volume_ocg:
+
+networks:
+  ocg-network:
+    driver: bridge
