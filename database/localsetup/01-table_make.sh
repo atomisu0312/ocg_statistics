@@ -6,3 +6,4 @@ set PGUSER=postgres
 
 # SQLファイルの実行
 #psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/sql/02-init.sql
+#psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/sql/03-dml.sql
