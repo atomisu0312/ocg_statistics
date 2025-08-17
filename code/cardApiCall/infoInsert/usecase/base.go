@@ -17,7 +17,10 @@ type UseCase interface {
 
 // NewUseCase は新しい UseCase インスタンスを作成します
 func NewUseCase[T interface{ UseCase }](i *do.Injector, constructor func(*useCase) T) (T, error) {
-	dbConn := do.MustInvoke[*config.DbConn](i)
+	dbConn, err := do.Invoke[*config.DbConn](i)
+	if err != nil {
+		return constructor(&useCase{}), err
+	}
 
 	return constructor(&useCase{
 		dbConn: dbConn,
