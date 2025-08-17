@@ -1,8 +1,8 @@
 ---
 version: '1'
 packages:
-  - name: gen
-    path: gen
+  - name: sqlc_gen
+    path: sqlc_gen
     schema: sqlc/db/
     queries: sqlc/queries/
     engine: postgresql
