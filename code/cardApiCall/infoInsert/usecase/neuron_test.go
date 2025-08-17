@@ -14,7 +14,7 @@ import (
 
 func TestNeuronUseCase(t *testing.T) {
 	t.Run("カード情報の取得テスト(アイツ)", func(t *testing.T) {
-		neuronID := 5642
+		neuronID := int64(5642)
 		expected := map[htmlget.SelectorKey]string{
 			"CardNameEn": "Aitsu",
 			"CardNameJa": "アイツ",
@@ -38,7 +38,7 @@ func TestNeuronUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の取得テスト(針淵のヴァリアンツ－アルクトスⅩⅡ)", func(t *testing.T) {
-		neuronID := 18182
+		neuronID := int64(18182)
 		expected := map[htmlget.SelectorKey]string{
 			"CardNameEn":     "Arktos XII - Chronochasm Vaylantz",
 			"CardNameJa":     "針淵のヴァリアンツ－アルクトスⅩⅡ",
@@ -62,7 +62,7 @@ func TestNeuronUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の取得テスト(古代の機械掌)", func(t *testing.T) {
-		neuronID := 6844
+		neuronID := int64(6844)
 		expected := map[htmlget.SelectorKey]string{
 			"CardNameEn": "Ancient Gear Fist",
 			"CardNameJa": "古代の機械掌",

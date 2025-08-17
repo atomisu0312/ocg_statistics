@@ -6,16 +6,17 @@ import (
 	"github.com/samber/do"
 )
 
-// ハンドラから直接呼ばれるのがユースケース
+// useCase は、ユースケースの実装です。
 type useCase struct {
 	dbConn *config.DbConn
 }
 
+// UseCase は、ユースケースのインターフェースです。
 type UseCase interface {
 	emptyFunc()
 }
 
-// NewUseCase は新しい UseCase インスタンスを作成します
+// NewUseCase は渡されたコンストラクタ関数を使って新規のユースケースを作成す∂る
 func NewUseCase[T interface{ UseCase }](i *do.Injector, constructor func(*useCase) T) (T, error) {
 	dbConn, err := do.Invoke[*config.DbConn](i)
 	if err != nil {

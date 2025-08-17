@@ -39,16 +39,18 @@ var selectorMap = SelectorMap{
 	},
 }
 
+// neuronHtmlGetterImpl は、NeuronHtmlGetterの実装です。
 type neuronHtmlGetterImpl struct {
 	*htmlGetter
 }
 
+// NeuronHtmlGetter は、NeuronHtmlGetterのインターフェースです。
 type NeuronHtmlGetter interface {
 	HTMLGetter
 	VisitSite(ctx context.Context, url string) (map[SelectorKey]string, error)
 }
 
-// コンストラクタ
+// NewNeuronHtmlGetter は、NeuronHtmlGetterのコンストラクタです。
 func NewNeuronHtmlGetter() NeuronHtmlGetter {
 	return NewHtmlGetter(func(h *htmlGetter) NeuronHtmlGetter {
 		return &neuronHtmlGetterImpl{htmlGetter: h}
@@ -58,6 +60,7 @@ func NewNeuronHtmlGetter() NeuronHtmlGetter {
 	), &selectorMap)
 }
 
+// VisitSite は、URLにアクセスし結果を返す
 func (h *neuronHtmlGetterImpl) VisitSite(ctx context.Context, url string) (map[SelectorKey]string, error) {
 	results, err := h.htmlGetter.Visit(ctx, url)
 	if err != nil {

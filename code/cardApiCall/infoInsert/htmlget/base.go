@@ -26,6 +26,7 @@ type ElementInfo struct {
 	Selector string
 }
 
+// NewHtmlGetter は、HTMLGetterのコンストラクタです。
 func NewHtmlGetter[T HTMLGetter](
 	constructor func(*htmlGetter) T,
 	collector *colly.Collector,
@@ -43,6 +44,7 @@ func NewHtmlGetter[T HTMLGetter](
 	return constructor(htmlGetter)
 }
 
+// Visitにより、URLにアクセスし結果を返す
 func (h *htmlGetter) Visit(ctx context.Context, url string) (map[SelectorKey]string, error) {
 	err := h.collector.Visit(url)
 	if err != nil {
