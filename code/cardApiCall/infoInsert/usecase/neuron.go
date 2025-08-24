@@ -34,6 +34,7 @@ func (n *neuronUseCaseImpl) emptyFunc() {
 
 // NeuronExtractedData は、NeuronUseCaseの抽出データです。
 type NeuronExtractedData struct {
+	CardID         int64
 	CardNameEn     string
 	CardNameJa     string
 	CardTextJa     string
@@ -71,6 +72,7 @@ func (n *neuronUseCaseImpl) GetCardInfo(ctx context.Context, cardID int64) (Neur
 	}
 
 	return NeuronExtractedData{
+		CardID:         cardID,
 		CardNameEn:     results[htmlget.CardNameEn],
 		CardNameJa:     cardNameJa,
 		CardTextJa:     cardTextJa,
