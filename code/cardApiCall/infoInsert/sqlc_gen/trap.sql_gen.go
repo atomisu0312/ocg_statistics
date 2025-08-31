@@ -28,3 +28,30 @@ func (q *Queries) FindTrapByCardID(ctx context.Context, cardID int64) (FindTrapB
 	err := row.Scan(&i.CardID, &i.TrapTypeID)
 	return i, err
 }
+
+const insertTrap = `-- name: InsertTrap :one
+INSERT INTO traps (card_id, trap_type_id)
+VALUES ($1, $2)
+RETURNING card_id, trap_type_id, dataowner, regist_date, enable_start_date, enable_end_date, version
+`
+
+type InsertTrapParams struct {
+	CardID     int64         `db:"card_id" json:"cardId"`
+	TrapTypeID sql.NullInt32 `db:"trap_type_id" json:"trapTypeId"`
+}
+
+// InsertTrap ...
+func (q *Queries) InsertTrap(ctx context.Context, arg InsertTrapParams) (Trap, error) {
+	row := q.db.QueryRowContext(ctx, insertTrap, arg.CardID, arg.TrapTypeID)
+	var i Trap
+	err := row.Scan(
+		&i.CardID,
+		&i.TrapTypeID,
+		&i.Dataowner,
+		&i.RegistDate,
+		&i.EnableStartDate,
+		&i.EnableEndDate,
+		&i.Version,
+	)
+	return i, err
+}
