@@ -22,7 +22,7 @@ def _deploy_model(**context):
     logger.info(f"Deploying model {model_id}")
 
 with DAG(
-    dag_id="10_xcoms_2",
+    dag_id="10_xcoms_4",
     start_date=airflow.utils.dates.days_ago(3),
     schedule_interval="@daily",
 ) as dag:

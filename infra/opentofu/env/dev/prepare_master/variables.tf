@@ -46,3 +46,38 @@ variable "parameter_delta_id_value" {
   description = "The value of the SSM parameter."
   type        = string
 }
+
+variable "mwaa_bucket_name" {
+  description = "The name of the S3 bucket for MWAA."
+  type        = string
+}
+
+variable "airflow_version" {
+  description = "The version of Apache Airflow to use."
+  type        = string
+}
+
+variable "internet_gateway_id" {
+  description = "The ID of the Internet Gateway."
+  type        = string
+}
+
+variable "private_subnet_cidrs" {
+  description = "The private subnet CIDR blocks."
+  type        = list(string)
+}
+
+variable "public_subnet_cidrs" {
+  description = "The public subnet CIDR blocks."
+  type        = list(string)
+}
+
+variable "vpc_id" {
+  description = "The ID of the VPC."
+  type        = string
+}
+
+variable "webserver_access_mode" {
+  description = "The webserver access mode for MWAA."
+  type        = string
+}
