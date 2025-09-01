@@ -18,6 +18,7 @@ func SetupDIContainer() *do.Injector {
 
 	// ユースケース
 	do.Provide(injector, usecase.NewNeuronUseCase)
+	do.Provide(injector, usecase.NewTcgUseCase)
 	//do.Provide(injector, usecase.NewAuthUseCase)
 
 	// ハンドラー
