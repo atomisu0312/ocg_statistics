@@ -112,8 +112,11 @@ jobs:
               issue_number: prNumber,
             });
 
+            console.log(`Found ${comments.length} comments in PR #${prNumber}.`);
+
             // 3. 識別子を含むコメント「すべて」をフィルタリング
             const botComments = comments.filter(comment => comment.body.includes(IDENTIFIER));
+            console.log(`Found ${botComments.length} bot comments in PR #${prNumber}.`);
 
             // 4. 元のコードと同様に、本文を連結してファイルに書き出す
             const pastCommentsBody = botComments.map(comment => comment.body).join('\n---\n');
