@@ -85,7 +85,7 @@ async function getCodeReview(): Promise<void> {
             }
           ],
           temperature: 0.7,
-          max_tokens: 15000
+          max_completion_tokens: 15000
         })
       }
     );
