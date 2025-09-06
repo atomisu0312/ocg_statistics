@@ -1,0 +1,140 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+jobs:
+  build_diff:
+    runs-on: ubuntu-latest
+    outputs:
+      has_body: ${{ steps.build_script.outputs.has_body }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub App Token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.REVIEW_GITHUB_APP_ID }}
+          private-key: ${{ secrets.REVIEW_GITHUB_APP_PRIVATE_KEY }}
+
+      - name: Build diff string
+        id: build_script
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            const fs = require('fs');
+            const prNumber = context.issue.number;
+            if (!prNumber) {
+              core.setFailed('Could not get pull request number from context');
+              return;
+            }
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            const changes = files.map(file => {
+              const status = file.status === 'modified' ? '🔄' :
+                            file.status === 'added' ? '✨' :
+                            file.status === 'removed' ? '🗑️' : '📝';
+              const patch = file.patch || '新規ファイル';
+              return '### ' + status + ' ' + file.filename + '\n' +
+                    '```diff\n' +
+                    patch + '\n' +
+                    '```\n' +
+                    '変更行数: ' + file.changes + '行';
+            });
+            const commentBody = changes.join('\n\n');
+            fs.writeFileSync('comment-body.txt', commentBody);
+            if (commentBody) {
+              core.setOutput('has_body', 'true');
+            } else {
+              core.setOutput('has_body', 'false');
+            }
+
+      - name: Upload comment body artifact
+        if: steps.build_script.outputs.has_body == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: comment-body-artifact
+          path: comment-body.txt
+          retention-days: 1
+
+  request_review:
+    runs-on: ubuntu-latest
+    needs: build_diff
+    if: needs.build_diff.outputs.has_body == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download diff artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: comment-body-artifact
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./.github/scripts/code-review
+
+      - name: Get AI review
+        run: npm start -- ../../../comment-body.txt ../../../review-comment.txt
+        working-directory: ./.github/scripts/code-review
+
+      - name: Upload review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-comment-artifact
+          path: review-comment.txt
+          retention-days: 1
+
+  post_comment:
+    runs-on: ubuntu-latest
+    needs: [request_review]
+    if: always() && needs.request_review.result == 'success'
+    steps:
+      - name: Download review artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: review-comment-artifact
+
+      - name: Generate GitHub App Token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.REVIEW_GITHUB_APP_ID }}
+          private-key: ${{ secrets.REVIEW_GITHUB_APP_PRIVATE_KEY }}
+
+      - name: Post review comment
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('review-comment.txt', 'utf8');
+            if (!body) {
+              throw new Error('Comment body file is empty or could not be read!');
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
