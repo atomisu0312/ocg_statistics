@@ -84,7 +84,6 @@ async function getCodeReview(): Promise<void> {
               content: userPrompt.trim()
             }
           ],
-          temperature: 0.7,
           max_completion_tokens: 15000
         })
       }
