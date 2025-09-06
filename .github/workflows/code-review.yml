@@ -126,7 +126,7 @@ jobs:
             core.setOutput('has_past_comments', pastCommentsBody ? 'true' : 'false');
 
       - name: Upload comment body artifact
-        if: steps.build_script.outputs.has_body == 'true'
+        if: steps.build_script_remote.outputs.has_body == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: comment-body-artifact
@@ -134,7 +134,7 @@ jobs:
           retention-days: 1
 
       - name: Upload past comments artifact
-        if: steps.fetch_comments_step.outputs.has_past_comments == 'true'
+        if: steps.fetch_comments_remote.outputs.has_past_comments == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: past-comments-artifact
