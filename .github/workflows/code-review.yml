@@ -11,6 +11,7 @@ permissions:
 
 env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  COMMENT_IDENTIFIER: ''
 
 jobs:
   start:
@@ -31,21 +32,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Local Run Placeholder for build_diff
-        if: ${{ env.ACT == 'true' }}
-        id: build_script # This ID is used for has_body output
-        run: |
-          echo "has_body=false" >> $GITHUB_OUTPUT
-          echo "Local run: Skipping diff and comment generation."
-
-      - name: Local Run Placeholder for fetch_comments
-        if: ${{ env.ACT == 'true' }}
-        id: fetch_comments_step # This ID is used for has_past_comments output
-        run: |
-          echo "has_past_comments=false" >> $GITHUB_OUTPUT
-          echo "Local run: Skipping past comments fetch."
-
       - name: Generate GitHub App Token
+        # このステップはリモート実行時にのみ必要
         if: env.ACT != 'true'
         id: generate_token
         uses: actions/create-github-app-token@v1
@@ -54,16 +42,23 @@ jobs:
           private-key: ${{ secrets.REVIEW_GITHUB_APP_PRIVATE_KEY }}
 
       - name: Build diff string
-        if: env.ACT != 'true'
-        id: build_script_remote
+        id: build_script # ✅ IDを1つに統合
         uses: actions/github-script@v8
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
+            // スクリプト内でローカル実行(ACT)の場合の処理を記述
+            if (process.env.ACT === 'true') {
+              console.log('Local run: Skipping diff generation.');
+              core.setOutput('has_body', 'false');
+              return;
+            }
+
+            // --- 以下はリモート実行時の処理 ---
             const fs = require('fs');
             const prNumber = context.issue.number;
             if (!prNumber) {
-              core.setFailed('Could not get pull request number from context');
+              core.setFailed('Could not get pull request number');
               return;
             }
             const { data: files } = await github.rest.pulls.listFiles({
@@ -77,56 +72,45 @@ jobs:
                             file.status === 'removed' ? '🗑️' :
                             '📝';
               const patch = file.patch || '新規ファイル';
-              return '### ' + status + ' ' + file.filename + '\n' +
-                    '```diff\n' +
-                    patch + '\n' +
-                    '```\n' +
-                    '変更行数: ' + file.changes + '行';
+              return `### ${status} ${file.filename}\n\`\`\`diff\n${patch}\n\`\`\`\n変更行数: ${file.changes}行`;
             });
             const commentBody = changes.join('\n\n');
             fs.writeFileSync('comment-body.txt', commentBody);
             core.setOutput('has_body', commentBody ? 'true' : 'false');
 
       - name: Fetch past comments
-        if: env.ACT != 'true'
-        id: fetch_comments_remote
+        id: fetch_comments_step # ✅ IDを1つに統合
         uses: actions/github-script@v8
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
-            const fs = require('fs');
-            
-            // 1. 投稿するコメントに埋め込むのと同じ、固定の識別子を定義
-            const IDENTIFIER = '';
-            
-            const prNumber = context.issue.number;
-            if (!prNumber) {
-              core.setFailed('Could not get pull request number from context');
+            // スクリプト内でローカル実行(ACT)の場合の処理を記述
+            if (process.env.ACT === 'true') {
+              console.log('Local run: Skipping past comments fetch.');
+              core.setOutput('has_past_comments', 'false');
               return;
             }
 
-            // 2. PRの全コメントを取得
+            // --- 以下はリモート実行時の処理 ---
+            const fs = require('fs');
+            const IDENTIFIER = process.env.COMMENT_IDENTIFIER;
+            const prNumber = context.issue.number;
+            if (!prNumber) {
+              core.setFailed('Could not get pull request number');
+              return;
+            }
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
             });
-
-            console.log(`Found ${comments.length} comments in PR #${prNumber}.`);
-
-            // 3. 識別子を含むコメント「すべて」をフィルタリング
             const botComments = comments.filter(comment => comment.body.includes(IDENTIFIER));
-            console.log(`Found ${botComments.length} bot comments in PR #${prNumber}.`);
-
-            // 4. 元のコードと同様に、本文を連結してファイルに書き出す
             const pastCommentsBody = botComments.map(comment => comment.body).join('\n---\n');
             fs.writeFileSync('past-comments.txt', pastCommentsBody);
-
-            console.log(`Found and saved ${botComments.length} past comment(s) to past-comments.txt.`);
             core.setOutput('has_past_comments', pastCommentsBody ? 'true' : 'false');
 
       - name: Upload comment body artifact
-        if: steps.build_script_remote.outputs.has_body == 'true'
+        if: steps.build_script.outputs.has_body == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: comment-body-artifact
@@ -134,7 +118,7 @@ jobs:
           retention-days: 1
 
       - name: Upload past comments artifact
-        if: steps.fetch_comments_remote.outputs.has_past_comments == 'true'
+        if: steps.fetch_comments_step.outputs.has_past_comments == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: past-comments-artifact
@@ -142,54 +126,36 @@ jobs:
           retention-days: 1
 
   request_review:
+    # ... (このジョブ以下は変更ありません)
     runs-on: ubuntu-latest
     needs: build_diff
     if: needs.build_diff.outputs.has_body == 'true'
     steps:
-      - name: Local Run Placeholder for request_review
-        if: ${{ env.ACT == 'true' }}
-        run: |
-          echo "Local run: Skipping AI review."
-
       - name: Checkout repository
-        if: env.ACT != 'true'
         uses: actions/checkout@v4
 
-      - name: Download diff artifact
-        if: env.ACT != 'true'
+      - name: Download artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: comment-body-artifact
-
-      - name: Download past comments artifact
-        if: env.ACT != 'true' && needs.build_diff.outputs.has_past_comments == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: past-comments-artifact
 
       - name: Setup Node.js
-        if: env.ACT != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install dependencies
-        if: env.ACT != 'true'
         run: npm install
         working-directory: ./.github/scripts/code-review
 
       - name: Get AI review
-        if: env.ACT != 'true'
         run: |
           PAST_COMMENTS_PATH=""
           if [ "${{ needs.build_diff.outputs.has_past_comments }}" == "true" ]; then
-            PAST_COMMENTS_PATH="../../../past-comments.txt"
+            PAST_COMMENTS_PATH="./past-comments-artifact/past-comments.txt"
           fi
-          npm start -- ../../../comment-body.txt ../../../review-comment.txt "$PAST_COMMENTS_PATH"
+          npm start -- ./comment-body-artifact/comment-body.txt ./review-comment.txt "$PAST_COMMENTS_PATH"
         working-directory: ./.github/scripts/code-review
 
       - name: Upload review artifact
-        if: env.ACT != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: review-comment-artifact
@@ -201,19 +167,12 @@ jobs:
     needs: [request_review]
     if: always() && needs.request_review.result == 'success'
     steps:
-      - name: Local Run Placeholder for post_comment
-        if: ${{ env.ACT == 'true' }}
-        run: |
-          echo "Local run: Skipping comment."
-
       - name: Download review artifact
-        if: env.ACT != 'true'
         uses: actions/download-artifact@v4
         with:
           name: review-comment-artifact
 
       - name: Generate GitHub App Token
-        if: env.ACT != 'true'
         id: generate_token
         uses: actions/create-github-app-token@v1
         with:
@@ -221,19 +180,20 @@ jobs:
           private-key: ${{ secrets.REVIEW_GITHUB_APP_PRIVATE_KEY }}
 
       - name: Post review comment
-        if: env.ACT != 'true'
         uses: actions/github-script@v8
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
             const fs = require('fs');
-            const body = fs.readFileSync('review-comment.txt', 'utf8');
-            if (!body) {
+            const IDENTIFIER = process.env.COMMENT_IDENTIFIER;
+            const reviewBody = fs.readFileSync('review-comment.txt', 'utf8');
+            if (!reviewBody) {
               throw new Error('Comment body file is empty or could not be read!');
             }
+            const finalBody = reviewBody + '\n\n' + IDENTIFIER;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: body
+              body: finalBody
             });
