@@ -20,6 +20,11 @@ if (!outputFilePath) {
     console.error('output file path is not provided.');
     process.exit(1);
 }
+const pastCommentsFilePath = process.argv[4];
+let pastComments = '';
+if (pastCommentsFilePath && fs.existsSync(pastCommentsFilePath)) {
+    pastComments = fs.readFileSync(pastCommentsFilePath, 'utf-8');
+}
 
 const changes = fs.readFileSync(diffFilePath, 'utf-8');
 
@@ -52,9 +57,12 @@ async function getCodeReview(): Promise<void> {
 
     const parts = template.split('## 差分');
     const systemPrompt = parts[0];
-    const userPromptTemplate = '## 差分' + parts[1];
+    let userPromptTemplate = '## 差分' + parts[1];
 
-    const userPrompt = userPromptTemplate.replace('${change}', changes);
+    let userPrompt = userPromptTemplate.replace('${change}', changes);
+    if (pastComments) {
+        userPrompt += `\n\n## 過去のレビューコメント\n${pastComments}`;
+    }
 
     const response = await fetch(
       'https://api.openai.com/v1/chat/completions',

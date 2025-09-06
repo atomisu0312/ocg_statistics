@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       has_body: ${{ steps.build_script.outputs.has_body }}
+      has_past_comments: ${{ steps.fetch_comments.outputs.has_past_comments }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,12 +49,13 @@ jobs:
             const changes = files.map(file => {
               const status = file.status === 'modified' ? '🔄' :
                             file.status === 'added' ? '✨' :
-                            file.status === 'removed' ? '🗑️' : '📝';
+                            file.status === 'removed' ? '🗑️' :
+                            '📝';
               const patch = file.patch || '新規ファイル';
-              return '### ' + status + ' ' + file.filename + '\n' +
-                    '```diff\n' +
-                    patch + '\n' +
-                    '```\n' +
+              return '### ' + status + ' ' + file.filename + '\n' + 
+                    '```diff\n' + 
+                    patch + '\n' + 
+                    '```\n' + 
                     '変更行数: ' + file.changes + '行';
             });
             const commentBody = changes.join('\n\n');
@@ -64,12 +66,47 @@ jobs:
               core.setOutput('has_body', 'false');
             }
 
+      - name: Fetch past comments
+        id: fetch_comments
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            const fs = require('fs');
+            const prNumber = context.issue.number;
+            if (!prNumber) {
+              core.setFailed('Could not get pull request number from context');
+              return;
+            }
+
+            const { data: app } = await github.rest.apps.getAuthenticated();
+            const appLogin = app.slug + '[bot]';
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const botComments = comments.filter(comment => comment.user.login === appLogin);
+            const pastCommentsBody = botComments.map(comment => comment.body).join('\n---\n');
+            fs.writeFileSync('past-comments.txt', pastCommentsBody);
+            core.setOutput('has_past_comments', pastCommentsBody ? 'true' : 'false');
+
       - name: Upload comment body artifact
         if: steps.build_script.outputs.has_body == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: comment-body-artifact
           path: comment-body.txt
+          retention-days: 1
+
+      - name: Upload past comments artifact
+        if: steps.fetch_comments.outputs.has_past_comments == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: past-comments-artifact
+          path: past-comments.txt
           retention-days: 1
 
   request_review:
@@ -85,6 +122,12 @@ jobs:
         with:
           name: comment-body-artifact
 
+      - name: Download past comments artifact
+        if: needs.build_diff.outputs.has_past_comments == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: past-comments-artifact
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -95,7 +138,12 @@ jobs:
         working-directory: ./.github/scripts/code-review
 
       - name: Get AI review
-        run: npm start -- ../../../comment-body.txt ../../../review-comment.txt
+        run: |
+          PAST_COMMENTS_PATH=""
+          if [ "${{ needs.build_diff.outputs.has_past_comments }}" == "true" ]; then
+            PAST_COMMENTS_PATH="../../../past-comments.txt"
+          fi
+          npm start -- ../../../comment-body.txt ../../../review-comment.txt "$PAST_COMMENTS_PATH"
         working-directory: ./.github/scripts/code-review
 
       - name: Upload review artifact
