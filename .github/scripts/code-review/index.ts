@@ -73,7 +73,7 @@ async function getCodeReview(): Promise<void> {
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
+          model: 'gpt-5-mini',
           messages: [
             {
               role: 'system',
@@ -85,7 +85,7 @@ async function getCodeReview(): Promise<void> {
             }
           ],
           temperature: 0.7,
-          max_tokens: 1500
+          max_tokens: 15000
         })
       }
     );
