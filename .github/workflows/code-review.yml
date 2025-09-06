@@ -11,7 +11,6 @@ permissions:
 
 env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  # ✅ 1. 識別子に具体的な値を設定
   COMMENT_IDENTIFIER: ''
 
 jobs:
@@ -44,7 +43,6 @@ jobs:
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
-            // ✅ 2. スクリプト内でローカル実行(ACT)の場合の処理を統合
             if (process.env.ACT === 'true') {
               console.log('Local run: Skipping diff generation.');
               core.setOutput('has_body', 'false');
@@ -76,7 +74,6 @@ jobs:
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
-            // ✅ 2. スクリプト内でローカル実行(ACT)の場合の処理を統合
             if (process.env.ACT === 'true') {
               console.log('Local run: Skipping past comments fetch.');
               core.setOutput('has_past_comments', 'false');
@@ -147,11 +144,11 @@ jobs:
         run: |
           PAST_COMMENTS_PATH=""
           if [ "${{ needs.build_diff.outputs.has_past_comments }}" == "true" ]; then
-            # ✅ 3. アーティファクトへの正しい相対パスに修正
-            PAST_COMMENTS_PATH="../../../past-comments-artifact/past-comments.txt"
+            # ✅ ディレクトリが作成されないため、ファイル名を直接指定
+            PAST_COMMENTS_PATH="../../../past-comments.txt"
           fi
-          # ✅ 3. アーティファクトへの正しい相対パスに修正
-          npm start -- ../../../comment-body-artifact/comment-body.txt ../../../review-comment.txt "$PAST_COMMENTS_PATH"
+          # ✅ ディレクトリが作成されないため、ファイル名を直接指定
+          npm start -- ../../../comment-body.txt ../../../review-comment.txt "$PAST_COMMENTS_PATH"
         working-directory: ./.github/scripts/code-review
 
       - name: Upload review artifact
@@ -185,11 +182,11 @@ jobs:
           script: |
             const fs = require('fs');
             const IDENTIFIER = process.env.COMMENT_IDENTIFIER;
+            // ✅ ディレクトリが作成されないため、ファイル名を直接指定
             const reviewBody = fs.readFileSync('review-comment.txt', 'utf8');
             if (!reviewBody) {
               throw new Error('Comment body file is empty or could not be read!');
             }
-            // ✅ 4. 新規コメントに識別子を埋め込み
             const finalBody = reviewBody + '\n\n' + IDENTIFIER;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
