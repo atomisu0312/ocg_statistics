@@ -101,8 +101,11 @@ jobs:
               return;
             }
 
-            const { data: app } = await github.rest.apps.getAuthenticated();
-            const appLogin = app.slug + '[bot]';
+            // ✅ 'users.getAuthenticated' を使ってボット自身の情報を取得
+            const { data: bot } = await github.rest.users.getAuthenticated();
+            const appLogin = bot.login; // bot.login に 'your-app-slug[bot]' が入っている
+
+            console.log(`The bot's login is: ${appLogin}`); // デバッグ用にログイン名を出力
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
