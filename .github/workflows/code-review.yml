@@ -95,27 +95,31 @@ jobs:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
             const fs = require('fs');
+            
+            // 1. 投稿するコメントに埋め込むのと同じ、固定の識別子を定義
+            const IDENTIFIER = '';
+            
             const prNumber = context.issue.number;
             if (!prNumber) {
               core.setFailed('Could not get pull request number from context');
               return;
             }
 
-            // ✅ 'users.getAuthenticated' を使ってボット自身の情報を取得
-            const { data: bot } = await github.rest.users.getAuthenticated();
-            const appLogin = bot.login; // bot.login に 'your-app-slug[bot]' が入っている
-
-            console.log(`The bot's login is: ${appLogin}`); // デバッグ用にログイン名を出力
-
+            // 2. PRの全コメントを取得
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
             });
 
-            const botComments = comments.filter(comment => comment.user.login === appLogin);
+            // 3. 識別子を含むコメント「すべて」をフィルタリング
+            const botComments = comments.filter(comment => comment.body.includes(IDENTIFIER));
+
+            // 4. 元のコードと同様に、本文を連結してファイルに書き出す
             const pastCommentsBody = botComments.map(comment => comment.body).join('\n---\n');
             fs.writeFileSync('past-comments.txt', pastCommentsBody);
+
+            console.log(`Found and saved ${botComments.length} past comment(s) to past-comments.txt.`);
             core.setOutput('has_past_comments', pastCommentsBody ? 'true' : 'false');
 
       - name: Upload comment body artifact
