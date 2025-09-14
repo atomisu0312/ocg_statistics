@@ -31,7 +31,7 @@ func testTrapTypeRetrieval(t *testing.T, dbConn *config.DbConn, target kind.Trap
 	})
 
 	assert.NoError(t, err)
-	assert.Equal(t, result.ID, target.ID, "IDが一致しません")
+	assert.Equal(t, target.ID, result.ID, "IDが一致しません")
 	assert.Equal(t, target.NameJa, result.NameJa, "名前（和名）が一致しません")
 	assert.Equal(t, target.NameEn, result.NameEn, "名前（英名）が一致しません")
 }

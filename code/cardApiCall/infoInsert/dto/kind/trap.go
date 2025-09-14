@@ -29,19 +29,18 @@ type TrapKind struct {
 }
 
 func (t *TrapKind) FromSelectFullKindInfoRow(row SelectFullKindInfoRow) TrapKind {
-	var k *Kind
-	kind := TrapKind{
-		Kind: k.FromSelectFullKindInfoRow(row),
-	}
+	var kind TrapKind
 
 	// 冗長に見えるかもしれないが、明示的に「通常」「永続」「カウンター」を返すことを強調する意味でこのような表記にしている
 	switch row.ID {
-	case 1:
+	case TrapTypeNormal.ID:
 		kind = TrapTypeNormal
-	case 2:
+	case TrapTypeContinuous.ID:
 		kind = TrapTypeContinuous
-	case 3:
+	case TrapTypeCounter.ID:
 		kind = TrapTypeCounter
+	default:
+		kind = kind.FromSelectFullKindInfoRow(row)
 	}
 
 	return kind

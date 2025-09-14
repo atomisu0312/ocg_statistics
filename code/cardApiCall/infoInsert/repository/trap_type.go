@@ -38,14 +38,20 @@ func (r *trapTypeRepositoryImpl) GetTrapTypeByNameJa(ctx context.Context, nameJa
 	start := time.Now()
 	defer r.logDBOperation("GetTrapTypeByNameJa", start, zap.String("name_ja", nameJa))
 
+	k := kind.TrapKind{}
 	trapType, err := r.queries.SelectTrapTypesByNameJa(ctx, sql.NullString{String: nameJa, Valid: true})
 	if err != nil {
 		r.logDBError("GetTrapTypeByNameJa", err, zap.String("name_ja", nameJa))
-		return kind.TrapKind{}, err
+		return k, err
 	}
-	var result kind.TrapKind
-	result = result.FromSelectFullKindInfoRow(kind.SelectFullKindInfoRow(trapType))
-	return result, nil
+
+	row := kind.SelectFullKindInfoRow{
+		ID:     trapType.ID,
+		NameJa: trapType.NameJa,
+		NameEn: trapType.NameEn,
+	}
+
+	return k.FromSelectFullKindInfoRow(row), nil
 }
 
 // GetTrapTypeByNameEn は英名で罠タイプを取得する
@@ -53,14 +59,20 @@ func (r *trapTypeRepositoryImpl) GetTrapTypeByNameEn(ctx context.Context, nameEn
 	start := time.Now()
 	defer r.logDBOperation("GetTrapTypeByNameEn", start, zap.String("name_en", nameEn))
 
+	k := kind.TrapKind{}
 	trapType, err := r.queries.SelectTrapTypesByNameEn(ctx, sql.NullString{String: nameEn, Valid: true})
 	if err != nil {
 		r.logDBError("GetTrapTypeByNameEn", err, zap.String("name_en", nameEn))
-		return kind.TrapKind{}, err
+		return k, err
 	}
-	var result kind.TrapKind
-	result = result.FromSelectFullKindInfoRow(kind.SelectFullKindInfoRow(trapType))
-	return result, nil
+
+	row := kind.SelectFullKindInfoRow{
+		ID:     trapType.ID,
+		NameJa: trapType.NameJa,
+		NameEn: trapType.NameEn,
+	}
+
+	return k.FromSelectFullKindInfoRow(row), nil
 }
 
 // GetTrapTypeById はIDで罠タイプを取得する
@@ -68,12 +80,18 @@ func (r *trapTypeRepositoryImpl) GetTrapTypeById(ctx context.Context, id int32) 
 	start := time.Now()
 	defer r.logDBOperation("GetTrapTypeById", start, zap.Int32("id", id))
 
+	k := kind.TrapKind{}
 	trapType, err := r.queries.SelectTrapTypesById(ctx, id)
 	if err != nil {
 		r.logDBError("GetTrapTypeById", err, zap.Int32("id", id))
-		return kind.TrapKind{}, err
+		return k, err
 	}
-	var result kind.TrapKind
-	result = result.FromSelectFullKindInfoRow(kind.SelectFullKindInfoRow(trapType))
-	return result, nil
+
+	row := kind.SelectFullKindInfoRow{
+		ID:     trapType.ID,
+		NameJa: trapType.NameJa,
+		NameEn: trapType.NameEn,
+	}
+
+	return k.FromSelectFullKindInfoRow(row), nil
 }
