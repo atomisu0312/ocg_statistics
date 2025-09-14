@@ -19,10 +19,10 @@ type StandardCard struct {
 	Type           string   `json:"type"`
 	Level          int64    `json:"level"`
 	Race           string   `json:"race"`
-	LinkMarkers    []string `json:"linkmarkers"`
+	LinkMarkers    []string `json:"linkMarkers"`
 	Attribute      string   `json:"attribute"`
-	LinkVal        int64    `json:"linkval"`
-	TypeLines      []string `json:"typeLines`
+	LinkVal        int64    `json:"linkVal"`
+	TypeLines      []string `json:"typeLines"`
 	CardType       string   `json:"cardType"`
 	PendulumTextJa string   `json:"pendulumTextJa"`
 	PendulumTextEn string   `json:"pendulumTextEn"`
@@ -34,8 +34,8 @@ func (s *StandardCard) ToInsertCardParamsExceptMonster() sqlc_gen.InsertCardPara
 		NameJa:     util.ParseAsSqlNullString(s.NameJa),
 		CardTextEn: util.ParseAsSqlNullString(s.DescEn),
 		CardTextJa: util.ParseAsSqlNullString(s.DescJa),
-		NeuronID:   util.ParseAsSqlNullInt64WithUint(s.NeuronID),
-		OcgApiID:   util.ParseAsSqlNullInt64WithUint(s.TcgID),
+		NeuronID:   util.ParseAsSqlNullInt64WithTreatZeroAsNull(s.NeuronID),
+		OcgApiID:   util.ParseAsSqlNullInt64WithTreatZeroAsNull(s.TcgID),
 	}
 }
 
