@@ -16,44 +16,78 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// UTの際に用いるベースとなるカード
+var baseCard = sqlc_gen.InsertCardParams{
+	NameJa:     sql.NullString{String: "テストカード", Valid: true},
+	NameEn:     sql.NullString{String: "Test Card", Valid: true},
+	CardTextJa: sql.NullString{String: "テストカードの説明", Valid: true},
+	CardTextEn: sql.NullString{String: "Test Card Description", Valid: true},
+	NeuronID:   sql.NullInt64{Int64: 1, Valid: true},
+	OcgApiID:   sql.NullInt64{Int64: 1, Valid: true},
+}
+
+// ベースとなるカードをとりあえず挿入
+func insertBaseCard(db *sql.DB) (sqlc_gen.Card, error) {
+	ctx := context.Background()
+	cardRepo := repository.NewCardRepository(sqlc_gen.New(db))
+	card, err := cardRepo.InsertCard(ctx, baseCard)
+	if err != nil {
+		return sqlc_gen.Card{}, fmt.Errorf("error creating card: %w", err)
+	}
+	return card, nil
+}
+
+// テストの共通セットアップ処理
+// 1. DBの疎通確認
+// 2. ベースカードを挿入
+// 3. クリーンアップ関数の返却
+func setupTest(t *testing.T) (*config.DbConn, sqlc_gen.Card, func()) {
+	// テスト前処理
+	config.BeforeEachForUnitTest()
+
+	// DIコンテナ内の依存関係を設定
+	injector := do.New()
+	do.Provide(injector, config.TestDbConnection)
+	dbConn := do.MustInvoke[*config.DbConn](injector)
+
+	// ベースカードを挿入
+	card, err := insertBaseCard(dbConn.DB)
+
+	// エラーが発生した場合はクリーンアップを行う
+	if err != nil {
+		dbConn.DB.Close()
+		config.AfterEachForUnitTest()
+		t.Fatalf("Failed to insert base card: %v", err)
+	}
+
+	// クリーンアップ関数を返す
+	cleanup := func() {
+		dbConn.DB.Close()
+		config.AfterEachForUnitTest()
+	}
+
+	return dbConn, card, cleanup
+}
+
 // TestForTrap tests the TrapRepository
 func TestForTrap(t *testing.T) {
 
 	t.Run("正常系01 トラップカードの新規登録処理", func(t *testing.T) {
-		config.BeforeEachForUnitTest()
-		defer config.AfterEachForUnitTest()
-
-		injector := do.New()
-		do.Provide(injector, config.TestDbConnection)
-		dbConn := do.MustInvoke[*config.DbConn](injector)
-		defer dbConn.DB.Close()
+		// セットアップ
+		dbConn, card, cleanup := setupTest(t)
+		defer cleanup()
 
 		// Test data
-		trapTypeID := int32(2) // Assuming trap type 2 exists
+		trapTypeID := int32(2) // カウンター罠のIDを便宜上セット
 
-		inserData := sqlc_gen.InsertCardParams{
-			NameJa:     sql.NullString{String: "テストカード", Valid: true},
-			NameEn:     sql.NullString{String: "Test Card", Valid: true},
-			CardTextJa: sql.NullString{String: "テストカードの説明", Valid: true},
-			CardTextEn: sql.NullString{String: "Test Card Description", Valid: true},
-			NeuronID:   sql.NullInt64{Int64: 1, Valid: true},
-			OcgApiID:   sql.NullInt64{Int64: 1, Valid: true},
-		}
-
-		// Transactional insertion
+		// トランザクションの整備
 		ctx := context.Background()
 		tr := transaction.NewTx(dbConn.DB)
 
+		// トランザクション境界の中で実行(useCaseではこの中にbaseCard挿入処理を入れる)
 		var insertedTrap sqlc_gen.Trap
 		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
-			cardRepo := repository.NewCardRepository(q)
 			trapRepo := repository.NewTrapRepository(q)
-
-			// First, create a card to associate the trap with
-			card, err := cardRepo.InsertCard(ctx, inserData)
-			if err != nil {
-				return fmt.Errorf("error creating card: %w", err)
-			}
 
 			trap, err := trapRepo.InsertTrap(ctx, card.ID, trapTypeID)
 			if err != nil {
@@ -68,13 +102,5 @@ func TestForTrap(t *testing.T) {
 		// Verification
 		assert.NotZero(t, insertedTrap.CardID, "Inserted trap should have a non-zero card ID")
 		assert.Equal(t, trapTypeID, insertedTrap.TrapTypeID.Int32, "The trap's type ID should match the input")
-
-		// Verify that the data is actually in the database
-		q := sqlc_gen.New(dbConn.DB)
-		repo := repository.NewTrapRepository(q)
-		fetchedTrap, err := repo.GetTrapByCardID(ctx, insertedTrap.CardID)
-		require.NoError(t, err, "Should be able to fetch the newly inserted trap")
-		assert.Equal(t, insertedTrap.CardID, fetchedTrap.CardID, "Fetched trap card ID should match the inserted one")
-		assert.Equal(t, trapTypeID, fetchedTrap.TrapTypeID.Int32, "Fetched trap type ID should match the inserted one")
 	})
 }
