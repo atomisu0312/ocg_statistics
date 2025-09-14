@@ -22,6 +22,13 @@ var (
 			NameEn: "Counter",
 		},
 	}
+	TrapTypeUnknown = TrapKind{
+		Kind: Kind{
+			ID:     -1,
+			NameJa: "不明",
+			NameEn: "Unknown",
+		},
+	}
 )
 
 type TrapKind struct {
@@ -40,7 +47,7 @@ func (t *TrapKind) FromSelectFullKindInfoRow(row SelectFullKindInfoRow) TrapKind
 	case TrapTypeCounter.ID:
 		kind = TrapTypeCounter
 	default:
-		kind = kind.FromSelectFullKindInfoRow(row)
+		kind = TrapTypeUnknown
 	}
 
 	return kind
