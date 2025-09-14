@@ -14,7 +14,7 @@ type SelectFullKindInfoRow struct {
 	NameEn sql.NullString `db:"name_en" json:"nameEn"`
 }
 
-func (k Kind) FromSelectFullKindInfoRow(row SelectFullKindInfoRow) Kind {
+func (k *Kind) FromSelectFullKindInfoRow(row SelectFullKindInfoRow) Kind {
 	return Kind{
 		ID:     row.ID,
 		NameJa: row.NameJa.String,
