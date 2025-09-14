@@ -1,10 +1,9 @@
 package carddto
 
 import (
-	"database/sql"
-
 	"atomisu.com/ocg-statics/infoInsert/dto"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
+	"atomisu.com/ocg-statics/infoInsert/util"
 )
 
 // StandardCard はUsecaseの関数の引数として機能する
@@ -23,7 +22,7 @@ type StandardCard struct {
 	LinkMarkers    []string `json:"linkmarkers"`
 	Attribute      string   `json:"attribute"`
 	LinkVal        int64    `json:"linkval"`
-	TypeLines      []string `json:"typeline"`
+	TypeLines      []string `json:"typeLines`
 	CardType       string   `json:"cardType"`
 	PendulumTextJa string   `json:"pendulumTextJa"`
 	PendulumTextEn string   `json:"pendulumTextEn"`
@@ -31,17 +30,17 @@ type StandardCard struct {
 
 func (s *StandardCard) ToInsertCardParamsExceptMonster() sqlc_gen.InsertCardParams {
 	return sqlc_gen.InsertCardParams{
-		NameEn:     sql.NullString{String: s.NameEn, Valid: true},
-		NameJa:     sql.NullString{String: s.NameJa, Valid: true},
-		CardTextEn: sql.NullString{String: s.DescEn, Valid: true},
-		CardTextJa: sql.NullString{String: s.DescJa, Valid: true},
-		NeuronID:   sql.NullInt64{Int64: s.NeuronID, Valid: true},
-		OcgApiID:   sql.NullInt64{Int64: s.TcgID, Valid: true},
+		NameEn:     util.ParseAsSqlNullString(s.NameEn),
+		NameJa:     util.ParseAsSqlNullString(s.NameJa),
+		CardTextEn: util.ParseAsSqlNullString(s.DescEn),
+		CardTextJa: util.ParseAsSqlNullString(s.DescJa),
+		NeuronID:   util.ParseAsSqlNullInt64WithUint(s.NeuronID),
+		OcgApiID:   util.ParseAsSqlNullInt64WithUint(s.TcgID),
 	}
 }
 
 type AbstractCardSelectResult struct {
-	*dto.AbstractSelectResult
+	dto.AbstractSelectResult
 	NeuronID   int64  `db:"neuron_id" json:"neuronId"`
 	OcgApiID   int64  `db:"ocg_api_id" json:"ocgApiId"`
 	NameJa     string `db:"name_ja" json:"nameJa"`
