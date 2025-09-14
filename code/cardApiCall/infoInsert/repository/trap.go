@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
 	"go.uber.org/zap"
 )
@@ -12,7 +13,7 @@ import (
 // TrapRepository defines the interface for trap card database operations.
 type TrapRepository interface {
 	Repository
-	GetTrapByCardID(ctx context.Context, cardId int64) (sqlc_gen.FindTrapByCardIDRow, error)
+	GetTrapByCardID(ctx context.Context, cardId int64) (carddto.TrapCardSelectResult, error)
 	InsertTrap(ctx context.Context, cardId int64, trapTypeId int32) (sqlc_gen.Trap, error)
 }
 
@@ -32,18 +33,19 @@ func NewTrapRepository(q *sqlc_gen.Queries) TrapRepository {
 }
 
 // GetTrapByCardID retrieves a trap card by its card ID.
-func (r *trapRepositoryImpl) GetTrapByCardID(ctx context.Context, cardId int64) (sqlc_gen.FindTrapByCardIDRow, error) {
+func (r *trapRepositoryImpl) GetTrapByCardID(ctx context.Context, cardId int64) (carddto.TrapCardSelectResult, error) {
 	start := time.Now()
 	defer r.logDBOperation("GetTrapByCardID", start, zap.Int64("card_id", cardId))
 
-	trap, err := r.queries.FindTrapByCardID(ctx, cardId)
+	trap, err := r.queries.SelectFullTrapCardInfoByCardID(ctx, cardId)
 	if err != nil {
 		r.logDBError("GetTrapByCardID", err, zap.Int64("card_id", cardId))
-		return sqlc_gen.FindTrapByCardIDRow{}, err
+		return carddto.TrapCardSelectResult{}, err
 	}
-
-	r.logDBResult("GetTrapByCardID", trap, zap.Int64("card_id", cardId))
-	return trap, nil
+	var result carddto.TrapCardSelectResult
+	result = *result.FromSelectFullTrapCardInfoRow(carddto.SelectFullTrapCardInfoRow(trap))
+	r.logDBResult("GetTrapByCardID", result, zap.Int64("card_id", cardId))
+	return result, nil
 }
 
 // InsertTrap inserts a new trap card into the database.

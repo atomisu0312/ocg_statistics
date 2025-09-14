@@ -55,3 +55,156 @@ func (q *Queries) InsertTrap(ctx context.Context, arg InsertTrapParams) (Trap, e
 	)
 	return i, err
 }
+
+const selectFullTrapCardInfoByCardID = `-- name: SelectFullTrapCardInfoByCardID :one
+SELECT 
+  cards.id, cards.neuron_id, cards.ocg_api_id, cards.name_ja, cards.name_en, cards.card_text_ja, cards.card_text_en, cards.dataowner, cards.regist_date, cards.enable_start_date, cards.enable_end_date, cards.version
+  , trap_types.name_ja as trap_type_name_ja
+  , trap_types.name_en as trap_type_name_en
+  FROM cards
+join traps on cards.id = traps.card_id
+join trap_types on traps.trap_type_id = trap_types.id
+WHERE cards.id = $1
+`
+
+type SelectFullTrapCardInfoByCardIDRow struct {
+	ID              int64          `db:"id" json:"id"`
+	NeuronID        sql.NullInt64  `db:"neuron_id" json:"neuronId"`
+	OcgApiID        sql.NullInt64  `db:"ocg_api_id" json:"ocgApiId"`
+	NameJa          sql.NullString `db:"name_ja" json:"nameJa"`
+	NameEn          sql.NullString `db:"name_en" json:"nameEn"`
+	CardTextJa      sql.NullString `db:"card_text_ja" json:"cardTextJa"`
+	CardTextEn      sql.NullString `db:"card_text_en" json:"cardTextEn"`
+	Dataowner       sql.NullString `db:"dataowner" json:"dataowner"`
+	RegistDate      sql.NullTime   `db:"regist_date" json:"registDate"`
+	EnableStartDate sql.NullTime   `db:"enable_start_date" json:"enableStartDate"`
+	EnableEndDate   sql.NullTime   `db:"enable_end_date" json:"enableEndDate"`
+	Version         sql.NullInt64  `db:"version" json:"version"`
+	TrapTypeNameJa  sql.NullString `db:"trap_type_name_ja" json:"trapTypeNameJa"`
+	TrapTypeNameEn  sql.NullString `db:"trap_type_name_en" json:"trapTypeNameEn"`
+}
+
+// GetTrapCardByyOcgApiID ...
+func (q *Queries) SelectFullTrapCardInfoByCardID(ctx context.Context, id int64) (SelectFullTrapCardInfoByCardIDRow, error) {
+	row := q.db.QueryRowContext(ctx, selectFullTrapCardInfoByCardID, id)
+	var i SelectFullTrapCardInfoByCardIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.NeuronID,
+		&i.OcgApiID,
+		&i.NameJa,
+		&i.NameEn,
+		&i.CardTextJa,
+		&i.CardTextEn,
+		&i.Dataowner,
+		&i.RegistDate,
+		&i.EnableStartDate,
+		&i.EnableEndDate,
+		&i.Version,
+		&i.TrapTypeNameJa,
+		&i.TrapTypeNameEn,
+	)
+	return i, err
+}
+
+const selectFullTrapCardInfoByNeuronID = `-- name: SelectFullTrapCardInfoByNeuronID :one
+SELECT 
+  cards.id, cards.neuron_id, cards.ocg_api_id, cards.name_ja, cards.name_en, cards.card_text_ja, cards.card_text_en, cards.dataowner, cards.regist_date, cards.enable_start_date, cards.enable_end_date, cards.version
+  , trap_types.name_ja as trap_type_name_ja
+  , trap_types.name_en as trap_type_name_en
+  FROM cards
+join traps on cards.id = traps.card_id
+join trap_types on traps.trap_type_id = trap_types.id
+WHERE cards.neuron_id = $1
+`
+
+type SelectFullTrapCardInfoByNeuronIDRow struct {
+	ID              int64          `db:"id" json:"id"`
+	NeuronID        sql.NullInt64  `db:"neuron_id" json:"neuronId"`
+	OcgApiID        sql.NullInt64  `db:"ocg_api_id" json:"ocgApiId"`
+	NameJa          sql.NullString `db:"name_ja" json:"nameJa"`
+	NameEn          sql.NullString `db:"name_en" json:"nameEn"`
+	CardTextJa      sql.NullString `db:"card_text_ja" json:"cardTextJa"`
+	CardTextEn      sql.NullString `db:"card_text_en" json:"cardTextEn"`
+	Dataowner       sql.NullString `db:"dataowner" json:"dataowner"`
+	RegistDate      sql.NullTime   `db:"regist_date" json:"registDate"`
+	EnableStartDate sql.NullTime   `db:"enable_start_date" json:"enableStartDate"`
+	EnableEndDate   sql.NullTime   `db:"enable_end_date" json:"enableEndDate"`
+	Version         sql.NullInt64  `db:"version" json:"version"`
+	TrapTypeNameJa  sql.NullString `db:"trap_type_name_ja" json:"trapTypeNameJa"`
+	TrapTypeNameEn  sql.NullString `db:"trap_type_name_en" json:"trapTypeNameEn"`
+}
+
+// GetTrapCardByNeuronID ...
+func (q *Queries) SelectFullTrapCardInfoByNeuronID(ctx context.Context, neuronID sql.NullInt64) (SelectFullTrapCardInfoByNeuronIDRow, error) {
+	row := q.db.QueryRowContext(ctx, selectFullTrapCardInfoByNeuronID, neuronID)
+	var i SelectFullTrapCardInfoByNeuronIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.NeuronID,
+		&i.OcgApiID,
+		&i.NameJa,
+		&i.NameEn,
+		&i.CardTextJa,
+		&i.CardTextEn,
+		&i.Dataowner,
+		&i.RegistDate,
+		&i.EnableStartDate,
+		&i.EnableEndDate,
+		&i.Version,
+		&i.TrapTypeNameJa,
+		&i.TrapTypeNameEn,
+	)
+	return i, err
+}
+
+const selectFullTrapCardInfoByOcgApiID = `-- name: SelectFullTrapCardInfoByOcgApiID :one
+SELECT 
+  cards.id, cards.neuron_id, cards.ocg_api_id, cards.name_ja, cards.name_en, cards.card_text_ja, cards.card_text_en, cards.dataowner, cards.regist_date, cards.enable_start_date, cards.enable_end_date, cards.version
+  , trap_types.name_ja as trap_type_name_ja
+  , trap_types.name_en as trap_type_name_en
+  FROM cards
+join traps on cards.id = traps.card_id
+join trap_types on traps.trap_type_id = trap_types.id
+WHERE cards.ocg_api_id = $1
+`
+
+type SelectFullTrapCardInfoByOcgApiIDRow struct {
+	ID              int64          `db:"id" json:"id"`
+	NeuronID        sql.NullInt64  `db:"neuron_id" json:"neuronId"`
+	OcgApiID        sql.NullInt64  `db:"ocg_api_id" json:"ocgApiId"`
+	NameJa          sql.NullString `db:"name_ja" json:"nameJa"`
+	NameEn          sql.NullString `db:"name_en" json:"nameEn"`
+	CardTextJa      sql.NullString `db:"card_text_ja" json:"cardTextJa"`
+	CardTextEn      sql.NullString `db:"card_text_en" json:"cardTextEn"`
+	Dataowner       sql.NullString `db:"dataowner" json:"dataowner"`
+	RegistDate      sql.NullTime   `db:"regist_date" json:"registDate"`
+	EnableStartDate sql.NullTime   `db:"enable_start_date" json:"enableStartDate"`
+	EnableEndDate   sql.NullTime   `db:"enable_end_date" json:"enableEndDate"`
+	Version         sql.NullInt64  `db:"version" json:"version"`
+	TrapTypeNameJa  sql.NullString `db:"trap_type_name_ja" json:"trapTypeNameJa"`
+	TrapTypeNameEn  sql.NullString `db:"trap_type_name_en" json:"trapTypeNameEn"`
+}
+
+// GetTrapCardByyOcgApiID ...
+func (q *Queries) SelectFullTrapCardInfoByOcgApiID(ctx context.Context, ocgApiID sql.NullInt64) (SelectFullTrapCardInfoByOcgApiIDRow, error) {
+	row := q.db.QueryRowContext(ctx, selectFullTrapCardInfoByOcgApiID, ocgApiID)
+	var i SelectFullTrapCardInfoByOcgApiIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.NeuronID,
+		&i.OcgApiID,
+		&i.NameJa,
+		&i.NameEn,
+		&i.CardTextJa,
+		&i.CardTextEn,
+		&i.Dataowner,
+		&i.RegistDate,
+		&i.EnableStartDate,
+		&i.EnableEndDate,
+		&i.Version,
+		&i.TrapTypeNameJa,
+		&i.TrapTypeNameEn,
+	)
+	return i, err
+}
