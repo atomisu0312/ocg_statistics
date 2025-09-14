@@ -23,6 +23,7 @@ type TcgApiCard struct {
 	LinkVal               int64    `json:"linkval"`
 	TypeLines             []string `json:"typeline"`
 	HumanReadableCardType string   `json:"humanReadableCardType"`
+	PendulumText          string   `json:"pendulumText"`
 }
 
 // TcgApiResponse is a response from the TcgRest.
