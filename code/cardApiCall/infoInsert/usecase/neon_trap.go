@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
 	"atomisu.com/ocg-statics/infoInsert/repository"
@@ -16,10 +17,14 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 
 	result := int64(0)
 
+	// 一応のクレンジング処理
+	race := strings.ToLower(strings.TrimSpace(cardInfo.Race))
+
 	err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
 		// リポジトリの準備
 		cardRepo := repository.NewCardRepository(q)
 		trapRepo := repository.NewTrapRepository(q)
+		trapTypeRepo := repository.NewTrapTypeRepository(q)
 
 		// カードの挿入
 		card, err := cardRepo.InsertCard(ctx, cardInfo.ToInsertCardParamsExceptMonster())
@@ -27,9 +32,14 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 			return fmt.Errorf("error create card %w", err)
 		}
 
-		// トラップの挿入
-		// TODO: 適切にトラップ種別IDを判別する
-		_, err = trapRepo.InsertTrap(ctx, card.ID, 3)
+		// トラップ種別の取得
+		trapType, err := trapTypeRepo.GetTrapTypeByNameEn(ctx, race)
+		if err != nil {
+			return fmt.Errorf("error get trap type %w", err)
+		}
+
+		// Trapテーブルへの挿入
+		_, err = trapRepo.InsertTrap(ctx, card.ID, trapType.ID)
 
 		if err != nil {
 			return fmt.Errorf("error create card %w", err)
