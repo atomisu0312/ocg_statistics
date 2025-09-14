@@ -18,6 +18,8 @@ type NeonUseCase interface {
 	UseCase
 	InsertTrapCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error)
 	GetTrapCardByID(ctx context.Context, cardID int64) (carddto.TrapCardSelectResult, error)
+	InsertSpellCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error)
+	GetSpellCardByID(ctx context.Context, cardID int64) (carddto.SpellCardSelectResult, error)
 }
 
 // NewNeonUseCase は、NeonUseCaseのコンストラクタです。

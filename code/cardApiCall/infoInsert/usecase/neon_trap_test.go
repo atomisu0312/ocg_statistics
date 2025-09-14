@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNeonUseCase(t *testing.T) {
-	t.Parallel()
+func TestNeonTrapUseCase(t *testing.T) {
+	//t.Parallel()
 
 	t.Run("カード情報の挿入&取得テスト（カウンター罠）", func(t *testing.T) {
 		sampleData := carddto.StandardCard{

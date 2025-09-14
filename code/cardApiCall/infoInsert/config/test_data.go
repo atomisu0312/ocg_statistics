@@ -7,8 +7,7 @@ import (
 )
 
 const truncateSQL = `
-	TRUNCATE TABLE cards RESTART IDENTITY CASCADE;
-	TRUNCATE TABLE traps RESTART IDENTITY CASCADE;
+	TRUNCATE TABLE cards, traps, spells RESTART IDENTITY CASCADE;
 `
 
 func BeforeEachForUnitTest() {
@@ -22,7 +21,7 @@ func BeforeEachForUnitTest() {
 	// テーブルのトランケート
 	_, err := dbConn.Exec(truncateSQL)
 	if err != nil {
-		log.Fatalf("Failed to insert initial data: %v", err)
+		log.Fatalf("Failed to truncate tables: %v", err)
 	}
 
 	// DBコネクションのクローズ
@@ -45,7 +44,7 @@ func AfterEachForUnitTest() {
 		log.Fatalf("Failed to delete test data: %v", err)
 	}
 
-	// DBコネクションのクローズ
+	// DBコネションのクローズ
 	dbConn.Close()
 
 }
