@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
 	"atomisu.com/ocg-statics/infoInsert/repository"
@@ -17,9 +16,6 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 
 	result := int64(0)
 
-	// 一応のクレンジング処理
-	race := strings.ToLower(strings.TrimSpace(cardInfo.Race))
-
 	err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
 		// リポジトリの準備
 		cardRepo := repository.NewCardRepository(q)
@@ -32,8 +28,10 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 			return fmt.Errorf("error create card %w", err)
 		}
 
+		fmt.Println("card", card)
+
 		// トラップ種別の取得
-		trapType, err := trapTypeRepo.GetTrapTypeByNameEn(ctx, race)
+		trapType, err := trapTypeRepo.GetTrapTypeByNameEn(ctx, cardInfo.Race)
 		if err != nil {
 			return fmt.Errorf("error get trap type %w", err)
 		}
