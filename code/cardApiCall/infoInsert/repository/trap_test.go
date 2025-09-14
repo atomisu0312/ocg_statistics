@@ -55,14 +55,14 @@ func setupTest(t *testing.T) (*config.DbConn, sqlc_gen.Card, func()) {
 
 	// エラーが発生した場合はクリーンアップを行う
 	if err != nil {
-		dbConn.DB.Close()
+		dbConn.Close()
 		config.AfterEachForUnitTest()
 		t.Fatalf("Failed to insert base card: %v", err)
 	}
 
 	// クリーンアップ関数を返す
 	cleanup := func() {
-		dbConn.DB.Close()
+		dbConn.Close()
 		config.AfterEachForUnitTest()
 	}
 
@@ -103,11 +103,12 @@ func TestForTrap(t *testing.T) {
 		assert.Equal(t, trapTypeID, insertedTrap.TrapTypeID.Int32, "The trap's type ID should match the input")
 
 		// データの取得
+		ctx2 := context.Background()
 		var fetchedTrap sqlc_gen.FindTrapByCardIDRow
-		err = tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+		err = tr.ExecTx(ctx2, func(q *sqlc_gen.Queries) error {
 			trapRepo := repository.NewTrapRepository(q)
 
-			trap, err := trapRepo.GetTrapByCardID(ctx, card.ID)
+			trap, err := trapRepo.GetTrapByCardID(ctx2, card.ID)
 			if err != nil {
 				return fmt.Errorf("error inserting trap: %w", err)
 			}
