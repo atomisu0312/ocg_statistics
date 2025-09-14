@@ -3,7 +3,7 @@ package dto
 import "time"
 
 type AbstractSelectResult struct {
-	ID              int64     `json:"id"`
+	ID              int64     `db:"id" json:"id"`
 	Dataowner       string    `db:"dataowner" json:"dataowner"`
 	RegistDate      time.Time `db:"regist_date" json:"registDate"`
 	EnableStartDate time.Time `db:"enable_start_date" json:"enableStartDate"`
