@@ -96,11 +96,26 @@ func TestForTrap(t *testing.T) {
 			insertedTrap = trap
 			return nil
 		})
-
 		require.NoError(t, err, "Transaction should execute without error")
 
 		// Verification
 		assert.NotZero(t, insertedTrap.CardID, "Inserted trap should have a non-zero card ID")
 		assert.Equal(t, trapTypeID, insertedTrap.TrapTypeID.Int32, "The trap's type ID should match the input")
+
+		// データの取得
+		var fetchedTrap sqlc_gen.FindTrapByCardIDRow
+		err = tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			trapRepo := repository.NewTrapRepository(q)
+
+			trap, err := trapRepo.GetTrapByCardID(ctx, card.ID)
+			if err != nil {
+				return fmt.Errorf("error inserting trap: %w", err)
+			}
+			fetchedTrap = trap
+			return nil
+		})
+
+		assert.Equal(t, insertedTrap.CardID, fetchedTrap.CardID, "Fetched trap card ID should match the inserted one")
+		assert.Equal(t, trapTypeID, fetchedTrap.TrapTypeID.Int32, "Fetched trap type ID should match the inserted one")
 	})
 }

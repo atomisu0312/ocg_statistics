@@ -19,13 +19,13 @@ func BeforeEachForUnitTest() {
 
 	dbConn := do.MustInvoke[*DbConn](injector)
 
-	// Insert initial data
+	// テーブルのトランケート
 	_, err := dbConn.Exec(truncateSQL)
 	if err != nil {
 		log.Fatalf("Failed to insert initial data: %v", err)
 	}
 
-	// Clean up
+	// DBコネクションのクローズ
 	dbConn.Close()
 
 }
@@ -38,14 +38,14 @@ func AfterEachForUnitTest() {
 	dbConn := do.MustInvoke[*DbConn](injector)
 
 	var err error
-	// Clean up: Delete the inserted data
+	// テーブルのトランケート
 	_, err = dbConn.Exec(truncateSQL)
 
 	if err != nil {
 		log.Fatalf("Failed to delete test data: %v", err)
 	}
 
-	// Clean up
+	// DBコネクションのクローズ
 	dbConn.Close()
 
 }
