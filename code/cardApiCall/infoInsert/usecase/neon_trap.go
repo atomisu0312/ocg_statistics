@@ -20,6 +20,7 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 		// リポジトリの準備
 		cardRepo := repository.NewCardRepository(q)
 		trapRepo := repository.NewTrapRepository(q)
+		trapTypeRepo := repository.NewTrapTypeRepository(q)
 
 		// カードの挿入
 		card, err := cardRepo.InsertCard(ctx, cardInfo.ToInsertCardParamsExceptMonster())
@@ -28,8 +29,12 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 		}
 
 		// トラップの挿入
-		// TODO: 適切にトラップ種別IDを判別する
-		_, err = trapRepo.InsertTrap(ctx, card.ID, 3)
+		trapType, err := trapTypeRepo.GetTrapTypeByNameEn(ctx, cardInfo.Race)
+		if err != nil {
+			return fmt.Errorf("error get trap type %w", err)
+		}
+
+		_, err = trapRepo.InsertTrap(ctx, card.ID, trapType.ID)
 
 		if err != nil {
 			return fmt.Errorf("error create card %w", err)
