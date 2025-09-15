@@ -8,6 +8,7 @@ import (
 
 // StandardCard はUsecaseの関数の引数として機能する
 type StandardCard struct {
+	CardID         int64    `json:"cardId"`
 	DescEn         string   `json:"descEn"`
 	DescJa         string   `json:"descJa"`
 	NameEn         string   `json:"nameEn"`
