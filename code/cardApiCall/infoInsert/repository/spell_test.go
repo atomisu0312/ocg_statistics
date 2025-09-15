@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
+	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/repository"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
 	"atomisu.com/ocg-statics/infoInsert/transaction"
@@ -49,7 +49,7 @@ func TestForSpell(t *testing.T) {
 
 		// データの取得
 		ctx2 := context.Background()
-		var fetchedSpell carddto.SpellCardSelectResult
+		var fetchedSpell cardrecord.SpellCardSelectResult
 
 		err = tr.ExecTx(ctx2, func(q *sqlc_gen.Queries) error {
 			spellRepo := repository.NewSpellRepository(q)

@@ -1,4 +1,4 @@
-package carddto
+package cardrecord
 
 import (
 	"atomisu.com/ocg-statics/infoInsert/dto"

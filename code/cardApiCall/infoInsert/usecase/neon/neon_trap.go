@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
+	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/repository"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
 	"atomisu.com/ocg-statics/infoInsert/transaction"
 )
 
-func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error) {
+func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardrecord.StandardCard) (int64, error) {
 
 	tr := transaction.NewTx(n.ProduceConnDB())
 
@@ -50,7 +50,7 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 	return result, err
 }
 
-func (n *neonUseCaseImpl) GetTrapCardByID(ctx context.Context, cardID int64) (carddto.TrapCardSelectResult, error) {
+func (n *neonUseCaseImpl) GetTrapCardByID(ctx context.Context, cardID int64) (cardrecord.TrapCardSelectResult, error) {
 	trapRepo := repository.NewTrapRepository(sqlc_gen.New(n.ProduceConnDB()))
 	return trapRepo.GetTrapByCardID(ctx, cardID)
 }
