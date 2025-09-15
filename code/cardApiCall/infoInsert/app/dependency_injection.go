@@ -2,8 +2,9 @@ package app
 
 import (
 	"atomisu.com/ocg-statics/infoInsert/config"
-	"atomisu.com/ocg-statics/infoInsert/usecase"
-
+	"atomisu.com/ocg-statics/infoInsert/usecase/neon"
+	"atomisu.com/ocg-statics/infoInsert/usecase/neuron"
+	"atomisu.com/ocg-statics/infoInsert/usecase/tcgapi"
 	_ "github.com/lib/pq" // PostgreSQL ドライバをインポート
 	"github.com/samber/do"
 )
@@ -17,9 +18,9 @@ func SetupDIContainer() *do.Injector {
 	do.Provide(injector, config.NewDbConnection)
 
 	// ユースケース
-	do.Provide(injector, usecase.NewNeuronUseCase)
-	do.Provide(injector, usecase.NewTcgUseCase)
-	do.Provide(injector, usecase.NewNeonUseCase)
+	do.Provide(injector, neuron.NewNeuronUseCase)
+	do.Provide(injector, tcgapi.NewTcgUseCase)
+	do.Provide(injector, neon.NewNeonUseCase)
 	//do.Provide(injector, usecase.NewAuthUseCase)
 
 	// ハンドラー

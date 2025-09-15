@@ -1,4 +1,4 @@
-package usecase
+package neon
 
 import (
 	"context"
@@ -10,9 +10,9 @@ import (
 	"atomisu.com/ocg-statics/infoInsert/transaction"
 )
 
-func (n *neonUseCaseImpl) InsertSpellCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error) {
+func (n *NeonUseCaseImpl) InsertSpellCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error) {
 
-	tr := transaction.NewTx(n.dbConn.DB)
+	tr := transaction.NewTx(n.DbConn.DB)
 
 	result := int64(0)
 
@@ -48,7 +48,7 @@ func (n *neonUseCaseImpl) InsertSpellCardInfo(ctx context.Context, cardInfo card
 	return result, err
 }
 
-func (n *neonUseCaseImpl) GetSpellCardByID(ctx context.Context, cardID int64) (carddto.SpellCardSelectResult, error) {
-	spellRepo := repository.NewSpellRepository(sqlc_gen.New(n.dbConn.DB))
+func (n *NeonUseCaseImpl) GetSpellCardByID(ctx context.Context, cardID int64) (carddto.SpellCardSelectResult, error) {
+	spellRepo := repository.NewSpellRepository(sqlc_gen.New(n.DbConn.DB))
 	return spellRepo.GetSpellByCardID(ctx, cardID)
 }

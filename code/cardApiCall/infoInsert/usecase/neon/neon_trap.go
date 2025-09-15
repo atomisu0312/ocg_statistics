@@ -1,4 +1,4 @@
-package usecase
+package neon
 
 import (
 	"context"
@@ -10,9 +10,9 @@ import (
 	"atomisu.com/ocg-statics/infoInsert/transaction"
 )
 
-func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error) {
+func (n *NeonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error) {
 
-	tr := transaction.NewTx(n.dbConn.DB)
+	tr := transaction.NewTx(n.UseCaseImpl.DbConn.DB)
 
 	result := int64(0)
 
@@ -50,7 +50,7 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 	return result, err
 }
 
-func (n *neonUseCaseImpl) GetTrapCardByID(ctx context.Context, cardID int64) (carddto.TrapCardSelectResult, error) {
-	trapRepo := repository.NewTrapRepository(sqlc_gen.New(n.dbConn.DB))
+func (n *NeonUseCaseImpl) GetTrapCardByID(ctx context.Context, cardID int64) (carddto.TrapCardSelectResult, error) {
+	trapRepo := repository.NewTrapRepository(sqlc_gen.New(n.UseCaseImpl.DbConn.DB))
 	return trapRepo.GetTrapByCardID(ctx, cardID)
 }

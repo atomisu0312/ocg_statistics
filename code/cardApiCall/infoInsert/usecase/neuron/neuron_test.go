@@ -1,4 +1,4 @@
-package usecase_test
+package neuron_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"atomisu.com/ocg-statics/infoInsert/app"
 	"atomisu.com/ocg-statics/infoInsert/config"
 	"atomisu.com/ocg-statics/infoInsert/htmlget"
-	"atomisu.com/ocg-statics/infoInsert/usecase"
+	"atomisu.com/ocg-statics/infoInsert/usecase/neuron"
 	"github.com/samber/do"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,7 +26,7 @@ func TestNeuronUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neuronUseCase := do.MustInvoke[usecase.NeuronUseCase](injector)
+		neuronUseCase := do.MustInvoke[neuron.NeuronUseCase](injector)
 
 		results, err := neuronUseCase.GetCardInfo(context.Background(), neuronID)
 		assert.NoError(t, err)
@@ -52,7 +52,7 @@ func TestNeuronUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neuronUseCase := do.MustInvoke[usecase.NeuronUseCase](injector)
+		neuronUseCase := do.MustInvoke[neuron.NeuronUseCase](injector)
 
 		results, err := neuronUseCase.GetCardInfo(context.Background(), neuronID)
 		assert.NoError(t, err)
@@ -77,7 +77,7 @@ func TestNeuronUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neuronUseCase := do.MustInvoke[usecase.NeuronUseCase](injector)
+		neuronUseCase := do.MustInvoke[neuron.NeuronUseCase](injector)
 
 		results, err := neuronUseCase.GetCardInfo(context.Background(), neuronID)
 		assert.NoError(t, err)

@@ -1,35 +1,35 @@
-package usecase
+package neuron
 
 import (
 	"context"
 	"fmt"
 
 	"atomisu.com/ocg-statics/infoInsert/htmlget"
+	"atomisu.com/ocg-statics/infoInsert/usecase"
 	"atomisu.com/ocg-statics/infoInsert/util"
-
 	"github.com/samber/do"
 )
 
 // neuronUseCaseImpl は、NeuronUseCaseの実装です。
 type neuronUseCaseImpl struct {
-	*useCase
+	*usecase.UseCaseImpl
 }
 
 // NeuronUseCase は、NeuronUseCaseのインターフェースです。
 type NeuronUseCase interface {
-	UseCase
+	usecase.UseCase
 	GetCardInfo(ctx context.Context, cardID int64) (NeuronExtractedData, error)
 }
 
 // NewNeuronUseCase は、NeuronUseCaseのコンストラクタです。
 func NewNeuronUseCase(i *do.Injector) (NeuronUseCase, error) {
-	return NewUseCase(i, func(u *useCase) NeuronUseCase {
+	return usecase.NewUseCase(i, func(u *usecase.UseCaseImpl) NeuronUseCase {
 		return &neuronUseCaseImpl{u}
 	})
 }
 
 // emptyFunc は、空の関数です。
-func (n *neuronUseCaseImpl) emptyFunc() {
+func (n *neuronUseCaseImpl) EmptyFunc() {
 }
 
 // NeuronExtractedData は、NeuronUseCaseの抽出データです。
