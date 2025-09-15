@@ -14,17 +14,17 @@ type StandardCard struct {
 	NameJa         string   `json:"nameJa"`
 	NeuronID       int64    `json:"neuronId"`
 	TcgID          int64    `json:"tcgId"`
-	Def            int64    `json:"def"`
-	Atk            int64    `json:"atk"`
+	Def            int32    `json:"def"`
+	Atk            int32    `json:"atk"`
 	Type           string   `json:"type"`
-	Level          int64    `json:"level"`
+	Level          int32    `json:"level"`
 	Race           string   `json:"race"`
 	LinkMarkers    []string `json:"linkMarkers"`
 	Attribute      string   `json:"attribute"`
-	LinkVal        int64    `json:"linkVal"`
+	LinkVal        int32    `json:"linkVal"`
 	TypeLines      []string `json:"typeLines"`
 	CardType       string   `json:"cardType"`
-	PendulumScale  int64    `json:"pendulumScale"`
+	PendulumScale  int32    `json:"pendulumScale"`
 	PendulumTextJa string   `json:"pendulumTextJa"`
 	PendulumTextEn string   `json:"pendulumTextEn"`
 }

@@ -17,7 +17,7 @@ type TcgApiCard struct {
 	Def                   int64    `json:"def"`
 	Atk                   int64    `json:"atk"`
 	Type                  string   `json:"type"`
-	Level                 int64    `json:"level"`
+	Level                 int32    `json:"level"`
 	Race                  string   `json:"race"`
 	LinkMarkers           []string `json:"linkMarkers"`
 	Attribute             string   `json:"attribute"`
