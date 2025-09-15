@@ -19,7 +19,8 @@ type UseCase interface {
 func NewUseCase[T interface{ UseCase }](i *do.Injector, constructor func(*UseCaseImpl) T) (T, error) {
 	dbConn, err := do.Invoke[*config.DbConn](i)
 	if err != nil {
-		return constructor(&UseCaseImpl{}), err
+		var zero T
+		return zero, err
 	}
 
 	return constructor(&UseCaseImpl{

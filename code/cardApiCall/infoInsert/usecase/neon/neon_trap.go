@@ -12,7 +12,7 @@ import (
 
 func (n *NeonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error) {
 
-	tr := transaction.NewTx(n.UseCaseImpl.DbConn.DB)
+	tr := transaction.NewTx(n.DbConn.DB)
 
 	result := int64(0)
 
@@ -51,6 +51,6 @@ func (n *NeonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardd
 }
 
 func (n *NeonUseCaseImpl) GetTrapCardByID(ctx context.Context, cardID int64) (carddto.TrapCardSelectResult, error) {
-	trapRepo := repository.NewTrapRepository(sqlc_gen.New(n.UseCaseImpl.DbConn.DB))
+	trapRepo := repository.NewTrapRepository(sqlc_gen.New(n.DbConn.DB))
 	return trapRepo.GetTrapByCardID(ctx, cardID)
 }
