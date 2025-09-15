@@ -6,6 +6,8 @@ resource "neon_project" "this" {
     autoscaling_limit_min_cu = 0.5
     autoscaling_limit_max_cu = 1
   }
+
+  history_retention_seconds = 21600  # 6時間（最大値）
 }
 
 resource "neon_endpoint" "this" {
@@ -26,6 +28,7 @@ resource "neon_role" "this" {
   project_id = neon_project.this.id
   branch_id  = neon_branch.this.id
   name       = "myrole"
+  depends_on = [neon_endpoint.this]
 }
 
 resource "neon_database" "this" {
