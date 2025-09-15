@@ -24,6 +24,7 @@ type StandardCard struct {
 	LinkVal        int64    `json:"linkVal"`
 	TypeLines      []string `json:"typeLines"`
 	CardType       string   `json:"cardType"`
+	PendulumScale  int64    `json:"pendulumScale"`
 	PendulumTextJa string   `json:"pendulumTextJa"`
 	PendulumTextEn string   `json:"pendulumTextEn"`
 }
