@@ -9,10 +9,11 @@ import (
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/repository"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
+	"atomisu.com/ocg-statics/infoInsert/transaction"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMonsterInsert(t *testing.T) {
+func TestRitualMonsterInsert(t *testing.T) {
 	t.Run("正常系01: モンスターの挿入", func(t *testing.T) {
 		// セットアップ
 		dbConn, card, cleanup := setupTest(t)
@@ -20,7 +21,8 @@ func TestMonsterInsert(t *testing.T) {
 
 		ctx := context.Background()
 		q := sqlc_gen.New(dbConn)
-		repo := repository.NewMonsterRepository(q)
+		repoMonster := repository.NewMonsterRepository(q)
+		repoRitual := repository.NewRitualMonsterRepository(q)
 
 		testCardID := card.ID       // Unique card ID for testing
 		testRaceID := int32(1)      // Example race ID
@@ -30,31 +32,36 @@ func TestMonsterInsert(t *testing.T) {
 		testLevel := int32(4)
 		testTypeIDs := []int32{1, 2} // Example type IDs
 
-		monster, err := repo.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
+		tr := transaction.NewTx(dbConn.DB)
+		var insertedMonster sqlc_gen.RitualMonster
+		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			monster, err := repoMonster.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
+			if err != nil {
+				return fmt.Errorf("error inserting monster: %w", err)
+			}
+			target, err := repoRitual.InsertRitualMonster(ctx, monster.CardID)
+			if err != nil {
+				return fmt.Errorf("error inserting ritual monster: %w", err)
+			}
+			insertedMonster = target
+			return nil
+		})
+
 		assert.NoError(t, err)
-		assert.NotEqual(t, sqlc_gen.Monster{}, monster)
-		assert.Equal(t, testCardID, monster.CardID)
-		assert.Equal(t, testRaceID, monster.RaceID.Int32)
-		assert.Equal(t, testAttributeID, monster.AttributeID.Int32)
-		assert.Equal(t, testAttack, monster.Attack.Int32)
-		assert.Equal(t, testDefense, monster.Defense.Int32)
-		assert.Equal(t, testLevel, monster.Level.Int32)
-		assert.Equal(t, testTypeIDs, monster.TypeIds)
-		assert.True(t, monster.RegistDate.Valid)
-		assert.True(t, monster.EnableStartDate.Valid)
-		assert.True(t, monster.Version.Valid)
-		assert.Equal(t, int64(1), monster.Version.Int64)
+		assert.NotEqual(t, sqlc_gen.RitualMonster{}, insertedMonster)
+		assert.Equal(t, testCardID, insertedMonster.CardID)
 	})
 }
 
-func TestGetMonsterByCardID(t *testing.T) {
+func TestGetRitualMonsterByCardID(t *testing.T) {
 	t.Run("正常系01: 既存のモンスターを取得", func(t *testing.T) {
 		dbConn, card, cleanup := setupTest(t)
 		defer cleanup()
 
 		ctx := context.Background()
 		q := sqlc_gen.New(dbConn)
-		repo := repository.NewMonsterRepository(q)
+		repoMonster := repository.NewMonsterRepository(q)
+		repoRitual := repository.NewRitualMonsterRepository(q)
 
 		testCardID := card.ID // Unique card ID for testing
 		testRaceID := int32(2)
@@ -64,24 +71,31 @@ func TestGetMonsterByCardID(t *testing.T) {
 		testLevel := int32(6)
 		testTypeIDs := []int32{2, 4}
 
-		// Insert a monster first
-		insertedMonster, err := repo.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
-		assert.NoError(t, err)
-		assert.NotEqual(t, sqlc_gen.Monster{}, insertedMonster)
-		fmt.Println(insertedMonster)
+		tr := transaction.NewTx(dbConn.DB)
+		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			monster, err := repoMonster.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
+			if err != nil {
+				return fmt.Errorf("error inserting monster: %w", err)
+			}
+			_, err = repoRitual.InsertRitualMonster(ctx, monster.CardID)
+			if err != nil {
+				return fmt.Errorf("error inserting ritual monster: %w", err)
+			}
+			return nil
+		})
 
 		// Now retrieve it
-		retrievedMonsterResult, err := repo.GetMonsterByCardID(ctx, testCardID)
+		retrievedMonsterResult, err := repoRitual.GetRitualMonsterByCardID(ctx, testCardID)
 		assert.NoError(t, err)
-		assert.NotEqual(t, cardrecord.MonsterCardSelectResult{}, retrievedMonsterResult)
+		assert.NotEqual(t, cardrecord.RitualMonsterSelectResult{}, retrievedMonsterResult)
 		assert.Equal(t, testCardID, retrievedMonsterResult.ID)
 		assert.Equal(t, "ドラゴン族", retrievedMonsterResult.RaceNameJa)
 		assert.Equal(t, "Dragon", retrievedMonsterResult.RaceNameEn)
 		assert.Equal(t, "闇", retrievedMonsterResult.AttributeNameJa)
 		assert.Equal(t, "DARK", retrievedMonsterResult.AttributeNameEn)
-		assert.Equal(t, insertedMonster.Attack.Int32, retrievedMonsterResult.Attack)
-		assert.Equal(t, insertedMonster.Defense.Int32, retrievedMonsterResult.Defense)
-		assert.Equal(t, insertedMonster.Level.Int32, retrievedMonsterResult.Level)
+		assert.Equal(t, testAttack, retrievedMonsterResult.Attack)
+		assert.Equal(t, testDefense, retrievedMonsterResult.Defense)
+		assert.Equal(t, testLevel, retrievedMonsterResult.Level)
 		assert.Equal(t, []string{"効果", "スピリット"}, retrievedMonsterResult.TypeNamesJa)
 		assert.Equal(t, []string{"Effect", "Spirit"}, retrievedMonsterResult.TypeNamesEn)
 	})
@@ -92,11 +106,11 @@ func TestGetMonsterByCardID(t *testing.T) {
 
 		ctx := context.Background()
 		q := sqlc_gen.New(dbConn)
-		repo := repository.NewMonsterRepository(q)
+		repo := repository.NewRitualMonsterRepository(q)
 
 		nonExistentCardID := int64(99999998) // A card ID that should not exist
 
-		_, err := repo.GetMonsterByCardID(ctx, nonExistentCardID)
+		_, err := repo.GetRitualMonsterByCardID(ctx, nonExistentCardID)
 		assert.Error(t, err)
 		assert.Equal(t, sql.ErrNoRows, err)
 	})
