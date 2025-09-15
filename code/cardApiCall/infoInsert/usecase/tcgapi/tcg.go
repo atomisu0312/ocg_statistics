@@ -49,9 +49,6 @@ func NewTcgUseCase(i *do.Injector) (TcgUseCase, error) {
 	})
 }
 
-func (t *tcgUseCaseImpl) EmptyFunc() {
-}
-
 func (t *tcgUseCaseImpl) GetCardInfoByEnName(ctx context.Context, name string) (TcgApiCard, error) {
 	tcgRest := http.NewTCGRest()
 	results, err := tcgRest.GetEnInfoByEnName(ctx, name)

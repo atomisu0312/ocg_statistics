@@ -9,7 +9,7 @@ import (
 )
 
 // neonUseCaseImpl は、NeonUseCaseの実装です。
-type NeonUseCaseImpl struct {
+type neonUseCaseImpl struct {
 	*usecase.UseCaseImpl
 }
 
@@ -25,6 +25,6 @@ type NeonUseCase interface {
 // NewNeonUseCase は、NeonUseCaseのコンストラクタです。
 func NewNeonUseCase(i *do.Injector) (NeonUseCase, error) {
 	return usecase.NewUseCase(i, func(u *usecase.UseCaseImpl) NeonUseCase {
-		return &NeonUseCaseImpl{u}
+		return &neonUseCaseImpl{u}
 	})
 }

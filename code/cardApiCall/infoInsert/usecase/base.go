@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"database/sql"
+
 	"atomisu.com/ocg-statics/infoInsert/config"
 
 	"github.com/samber/do"
@@ -8,7 +10,14 @@ import (
 
 // useCase は、ユースケースの実装です。
 type UseCaseImpl struct {
-	DbConn *config.DbConn
+	dbConn *config.DbConn
+}
+
+func (u *UseCaseImpl) ProduceConnDB() *sql.DB {
+	if u.dbConn == nil {
+		panic("dbConn is nil")
+	}
+	return u.dbConn.DB
 }
 
 // UseCase は、ユースケースのインターフェースです。
@@ -24,6 +33,6 @@ func NewUseCase[T interface{ UseCase }](i *do.Injector, constructor func(*UseCas
 	}
 
 	return constructor(&UseCaseImpl{
-		DbConn: dbConn,
+		dbConn: dbConn,
 	}), nil
 }

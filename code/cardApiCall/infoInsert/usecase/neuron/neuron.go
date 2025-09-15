@@ -28,10 +28,6 @@ func NewNeuronUseCase(i *do.Injector) (NeuronUseCase, error) {
 	})
 }
 
-// emptyFunc は、空の関数です。
-func (n *neuronUseCaseImpl) EmptyFunc() {
-}
-
 // NeuronExtractedData は、NeuronUseCaseの抽出データです。
 type NeuronExtractedData struct {
 	CardID         int64
