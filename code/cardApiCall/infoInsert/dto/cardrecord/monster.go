@@ -19,6 +19,26 @@ type MonsterCardSelectResult struct {
 	AttributeNameEn string   `db:"attribute_name_en" json:"attributeNameEn"`
 }
 
+type MonsterTypeLineSelectResult struct {
+	ID         int64 `db:"id" json:"id"`
+	OcgApiID   int64 `db:"ocg_api_id" json:"ocgApiID"`
+	NeuronID   int64 `db:"neuron_id" json:"neuronID"`
+	IsNormal   bool  `db:"is_normal" json:"isNormal"`
+	IsEffect   bool  `db:"is_effect" json:"isEffect"`
+	IsToon     bool  `db:"is_toon" json:"isToon"`
+	IsSpirit   bool  `db:"is_spirit" json:"isSpirit"`
+	IsUnion    bool  `db:"is_union" json:"isUnion"`
+	IsDual     bool  `db:"is_dual" json:"isDual"`
+	IsTuner    bool  `db:"is_tuner" json:"isTuner"`
+	IsReverse  bool  `db:"is_reverse" json:"isReverse"`
+	IsRitual   bool  `db:"is_ritual" json:"isRitual"`
+	IsXyz      bool  `db:"is_xyz" json:"isXyz"`
+	IsSynchro  bool  `db:"is_synchro" json:"isSynchro"`
+	IsFusion   bool  `db:"is_fusion" json:"isFusion"`
+	IsLink     bool  `db:"is_link" json:"isLink"`
+	IsPendulum bool  `db:"is_pendulum" json:"isPendulum"`
+}
+
 type FusionMonsterSelectResult struct {
 	MonsterCardSelectResult
 }
@@ -97,6 +117,48 @@ type SelectFullPendulumMonsterCardInfoRow struct {
 
 type SelectFullRitualMonsterCardInfoRow struct {
 	SelectFullMonsterCardInfoRow
+}
+
+type SelectMonsterTypeLineByCardIDRow struct {
+	ID         int64 `db:"id" json:"id"`
+	OcgApiID   int64 `db:"ocg_api_id" json:"ocgApiID"`
+	NeuronID   int64 `db:"neuron_id" json:"neuronID"`
+	IsNormal   bool  `db:"is_normal" json:"isNormal"`
+	IsEffect   bool  `db:"is_effect" json:"isEffect"`
+	IsToon     bool  `db:"is_toon" json:"isToon"`
+	IsSpirit   bool  `db:"is_spirit" json:"isSpirit"`
+	IsUnion    bool  `db:"is_union" json:"isUnion"`
+	IsDual     bool  `db:"is_dual" json:"isDual"`
+	IsTuner    bool  `db:"is_tuner" json:"isTuner"`
+	IsReverse  bool  `db:"is_reverse" json:"isReverse"`
+	IsRitual   bool  `db:"is_ritual" json:"isRitual"`
+	IsXyz      bool  `db:"is_xyz" json:"isXyz"`
+	IsSynchro  bool  `db:"is_synchro" json:"isSynchro"`
+	IsFusion   bool  `db:"is_fusion" json:"isFusion"`
+	IsLink     bool  `db:"is_link" json:"isLink"`
+	IsPendulum bool  `db:"is_pendulum" json:"isPendulum"`
+}
+
+func (m *MonsterTypeLineSelectResult) FromSelectMonsterTypeLineByCardIDRow(row SelectMonsterTypeLineByCardIDRow) *MonsterTypeLineSelectResult {
+	return &MonsterTypeLineSelectResult{
+		ID:         row.ID,
+		OcgApiID:   row.OcgApiID,
+		NeuronID:   row.NeuronID,
+		IsNormal:   row.IsNormal,
+		IsEffect:   row.IsEffect,
+		IsToon:     row.IsToon,
+		IsSpirit:   row.IsSpirit,
+		IsUnion:    row.IsUnion,
+		IsDual:     row.IsDual,
+		IsTuner:    row.IsTuner,
+		IsReverse:  row.IsReverse,
+		IsRitual:   row.IsRitual,
+		IsXyz:      row.IsXyz,
+		IsSynchro:  row.IsSynchro,
+		IsFusion:   row.IsFusion,
+		IsLink:     row.IsLink,
+		IsPendulum: row.IsPendulum,
+	}
 }
 
 func (m *MonsterCardSelectResult) FromSelectFullMonsterCardInfoRow(row SelectFullMonsterCardInfoRow) *MonsterCardSelectResult {

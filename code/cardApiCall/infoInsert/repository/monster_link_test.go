@@ -102,6 +102,13 @@ func TestGetLinkMonsterByCardID(t *testing.T) {
 		assert.Equal(t, []string{"効果", "スピリット"}, retrievedMonsterResult.TypeNamesJa)
 		assert.Equal(t, []string{"Effect", "Spirit"}, retrievedMonsterResult.TypeNamesEn)
 		assert.Equal(t, testLinkMarker, retrievedMonsterResult.LinkMarker.Int32)
+
+		repoMonster := repository.NewMonsterRepository(q)
+		retrievedMonsterResult2, err := repoMonster.GetMonsterTypeLineByCardID(ctx, testCardID)
+		assert.NoError(t, err)
+		assert.NotEqual(t, cardrecord.MonsterTypeLineSelectResult{}, retrievedMonsterResult2)
+		assert.Equal(t, testCardID, retrievedMonsterResult2.ID)
+		assert.Equal(t, true, retrievedMonsterResult2.IsLink)
 	})
 
 	t.Run("異常系01: 存在しないモンスターを取得", func(t *testing.T) {

@@ -98,6 +98,13 @@ func TestGetRitualMonsterByCardID(t *testing.T) {
 		assert.Equal(t, testLevel, retrievedMonsterResult.Level)
 		assert.Equal(t, []string{"効果", "スピリット"}, retrievedMonsterResult.TypeNamesJa)
 		assert.Equal(t, []string{"Effect", "Spirit"}, retrievedMonsterResult.TypeNamesEn)
+
+		repoMonster := repository.NewMonsterRepository(q)
+		retrievedMonsterResult2, err := repoMonster.GetMonsterTypeLineByCardID(ctx, testCardID)
+		assert.NoError(t, err)
+		assert.NotEqual(t, cardrecord.MonsterTypeLineSelectResult{}, retrievedMonsterResult2)
+		assert.Equal(t, testCardID, retrievedMonsterResult2.ID)
+		assert.Equal(t, true, retrievedMonsterResult2.IsRitual)
 	})
 
 	t.Run("異常系01: 存在しないモンスターを取得", func(t *testing.T) {
