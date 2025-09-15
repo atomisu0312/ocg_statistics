@@ -14,14 +14,14 @@ type TcgApiCard struct {
 	Desc                  string   `json:"desc"`
 	Name                  string   `json:"name"`
 	ID                    int64    `json:"id"`
-	Def                   int64    `json:"def"`
-	Atk                   int64    `json:"atk"`
+	Def                   int32    `json:"def"`
+	Atk                   int32    `json:"atk"`
 	Type                  string   `json:"type"`
-	Level                 int64    `json:"level"`
+	Level                 int32    `json:"level"`
 	Race                  string   `json:"race"`
 	LinkMarkers           []string `json:"linkMarkers"`
 	Attribute             string   `json:"attribute"`
-	LinkVal               int64    `json:"linkVal"`
+	LinkVal               int32    `json:"linkVal"`
 	TypeLines             []string `json:"typeLines"`
 	HumanReadableCardType string   `json:"humanReadableCardType"`
 	PendulumText          string   `json:"pendulumText"`
