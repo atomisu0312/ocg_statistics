@@ -108,6 +108,13 @@ func TestGetPendulumMonsterByCardID(t *testing.T) {
 		assert.Equal(t, testScale, retrievedMonsterResult.Scale.Int32)
 		assert.Equal(t, testPendulumTextJa, retrievedMonsterResult.PendulumTextJa.String)
 		assert.Equal(t, testPendulumTextEn, retrievedMonsterResult.PendulumTextEn.String)
+
+		repoMonster := repository.NewMonsterRepository(q)
+		retrievedMonsterResult2, err := repoMonster.GetMonsterTypeLineByCardID(ctx, testCardID)
+		assert.NoError(t, err)
+		assert.NotEqual(t, cardrecord.MonsterTypeLineSelectResult{}, retrievedMonsterResult2)
+		assert.Equal(t, testCardID, retrievedMonsterResult2.ID)
+		assert.Equal(t, true, retrievedMonsterResult2.IsPendulum)
 	})
 
 	t.Run("異常系01: 存在しないモンスターを取得", func(t *testing.T) {

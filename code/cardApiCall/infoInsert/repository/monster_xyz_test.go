@@ -26,7 +26,7 @@ func TestXyzMonsterInsert(t *testing.T) {
 		testAttributeID := int32(1) // Example attribute ID
 		testAttack := int32(1000)
 		testDefense := int32(500)
-		testLevel := int32(4) // Using Level for Rank
+		testLevel := int32(4)        // Using Level for Rank
 		testTypeIDs := []int32{1, 2} // Example type IDs
 
 		tr := transaction.NewTx(dbConn.DB)
@@ -98,6 +98,13 @@ func TestGetXyzMonsterByCardID(t *testing.T) {
 		assert.Equal(t, testLevel, retrievedMonsterResult.Level) // Asserting Level for Rank
 		assert.Equal(t, []string{"効果", "スピリット"}, retrievedMonsterResult.TypeNamesJa)
 		assert.Equal(t, []string{"Effect", "Spirit"}, retrievedMonsterResult.TypeNamesEn)
+
+		repoMonster := repository.NewMonsterRepository(q)
+		retrievedMonsterResult2, err := repoMonster.GetMonsterTypeLineByCardID(ctx, testCardID)
+		assert.NoError(t, err)
+		assert.NotEqual(t, cardrecord.MonsterTypeLineSelectResult{}, retrievedMonsterResult2)
+		assert.Equal(t, testCardID, retrievedMonsterResult2.ID)
+		assert.Equal(t, true, retrievedMonsterResult2.IsXyz)
 	})
 
 	t.Run("異常系01: 存在しないモンスターを取得", func(t *testing.T) {

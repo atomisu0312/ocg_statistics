@@ -651,6 +651,108 @@ func (q *Queries) SelectFullMonsterCardInfoByNeuronID(ctx context.Context, neuro
 	return i, err
 }
 
+const selectFullMonsterCardInfoByOcgApiID = `-- name: SelectFullMonsterCardInfoByOcgApiID :one
+with target_card as (
+    select
+        id, neuron_id, ocg_api_id, name_ja, name_en, card_text_ja, card_text_en, dataowner, regist_date, enable_start_date, enable_end_date, version
+    from
+        cards
+    where
+        ocg_api_id = $1
+),
+card_types as (
+    select
+        tt.id as card_id,
+        array_agg(mt.name_ja)::varchar[] as type_names_ja,
+        array_agg(mt.name_en)::varchar[] as type_names_en
+    from
+        target_card as tt
+    join
+    monsters as m on m.card_id = tt.id
+    cross join lateral
+        unnest(m.type_ids) as t(type_id)
+    join
+        monster_types as mt on t.type_id = mt.id
+    group by
+        tt.id
+)
+select
+    c.id, c.neuron_id, c.ocg_api_id, c.name_ja, c.name_en, c.card_text_ja, c.card_text_en, c.dataowner, c.regist_date, c.enable_start_date, c.enable_end_date, c.version,
+    m.attack,
+    m.defense,
+    m.level,
+    ct.type_names_ja,
+    ct.type_names_en,
+    r.name_ja as race_name_ja,
+    r.name_en as race_name_en,
+    a.name_ja as attribute_name_ja,
+    a.name_en as attribute_name_en
+from
+    target_card as c
+join
+    monsters as m on c.id = m.card_id
+join
+    races as r on m.race_id = r.id
+join
+    attributes as a on m.attribute_id = a.id
+join
+    card_types as ct on c.id = ct.card_id
+`
+
+type SelectFullMonsterCardInfoByOcgApiIDRow struct {
+	ID              int64          `db:"id" json:"id"`
+	NeuronID        sql.NullInt64  `db:"neuron_id" json:"neuronId"`
+	OcgApiID        sql.NullInt64  `db:"ocg_api_id" json:"ocgApiId"`
+	NameJa          sql.NullString `db:"name_ja" json:"nameJa"`
+	NameEn          sql.NullString `db:"name_en" json:"nameEn"`
+	CardTextJa      sql.NullString `db:"card_text_ja" json:"cardTextJa"`
+	CardTextEn      sql.NullString `db:"card_text_en" json:"cardTextEn"`
+	Dataowner       sql.NullString `db:"dataowner" json:"dataowner"`
+	RegistDate      sql.NullTime   `db:"regist_date" json:"registDate"`
+	EnableStartDate sql.NullTime   `db:"enable_start_date" json:"enableStartDate"`
+	EnableEndDate   sql.NullTime   `db:"enable_end_date" json:"enableEndDate"`
+	Version         sql.NullInt64  `db:"version" json:"version"`
+	Attack          sql.NullInt32  `db:"attack" json:"attack"`
+	Defense         sql.NullInt32  `db:"defense" json:"defense"`
+	Level           sql.NullInt32  `db:"level" json:"level"`
+	TypeNamesJa     []string       `db:"type_names_ja" json:"typeNamesJa"`
+	TypeNamesEn     []string       `db:"type_names_en" json:"typeNamesEn"`
+	RaceNameJa      sql.NullString `db:"race_name_ja" json:"raceNameJa"`
+	RaceNameEn      sql.NullString `db:"race_name_en" json:"raceNameEn"`
+	AttributeNameJa sql.NullString `db:"attribute_name_ja" json:"attributeNameJa"`
+	AttributeNameEn sql.NullString `db:"attribute_name_en" json:"attributeNameEn"`
+}
+
+// GetMonsterCardInfoByOcgApiID  ...
+func (q *Queries) SelectFullMonsterCardInfoByOcgApiID(ctx context.Context, ocgApiID sql.NullInt64) (SelectFullMonsterCardInfoByOcgApiIDRow, error) {
+	row := q.db.QueryRowContext(ctx, selectFullMonsterCardInfoByOcgApiID, ocgApiID)
+	var i SelectFullMonsterCardInfoByOcgApiIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.NeuronID,
+		&i.OcgApiID,
+		&i.NameJa,
+		&i.NameEn,
+		&i.CardTextJa,
+		&i.CardTextEn,
+		&i.Dataowner,
+		&i.RegistDate,
+		&i.EnableStartDate,
+		&i.EnableEndDate,
+		&i.Version,
+		&i.Attack,
+		&i.Defense,
+		&i.Level,
+		pq.Array(&i.TypeNamesJa),
+		pq.Array(&i.TypeNamesEn),
+		&i.RaceNameJa,
+		&i.RaceNameEn,
+		&i.AttributeNameJa,
+		&i.AttributeNameEn,
+	)
+	return i, err
+}
+
 const selectFullPendulumMonsterCardInfoByCardID = `-- name: SelectFullPendulumMonsterCardInfoByCardID :one
 with target_card as (
     select
@@ -1072,6 +1174,108 @@ func (q *Queries) SelectFullXyzMonsterCardInfoByCardID(ctx context.Context, id i
 		&i.RaceNameEn,
 		&i.AttributeNameJa,
 		&i.AttributeNameEn,
+	)
+	return i, err
+}
+
+const selectMonsterTypeLineByCardID = `-- name: SelectMonsterTypeLineByCardID :one
+with target_card as (
+    select
+		c.id,
+		c.neuron_id,
+		c.ocg_api_id
+    from
+        cards c
+    where
+        c.id = $1
+),
+card_types as (
+    select
+        tt.id as card_id,
+        array_agg(mt.name_ja)::varchar[] as type_names_ja,
+        array_agg(mt.name_en)::varchar[] as type_names_en
+    from
+        target_card as tt
+    join
+    monsters as m on m.card_id = tt.id
+    cross join lateral
+        unnest(m.type_ids) as t(type_id)
+    join
+        monster_types as mt on t.type_id = mt.id
+    group by
+        tt.id
+)
+select
+    tc.id,
+    tc.neuron_id,
+    tc.ocg_api_id,
+    'Normal' = ANY(ct.type_names_en)::boolean as is_normal,
+    'Effect' = ANY(ct.type_names_en)::boolean as is_effect,
+    'Toon' = ANY(ct.type_names_en)::boolean as is_toon,
+    'Spirit' = ANY(ct.type_names_en)::boolean as is_spirit,
+    'Union' = ANY(ct.type_names_en)::boolean as is_union,
+    'Dual' = ANY(ct.type_names_en)::boolean as is_dual,
+    'Tuner' = ANY(ct.type_names_en)::boolean as is_tuner,
+    'Reverse' = ANY(ct.type_names_en)::boolean as is_reverse,
+    rm.card_id is not null::boolean as is_ritual,
+    xm.card_id is not null::boolean as is_xyz,
+    sm.card_id is not null::boolean as is_synchro,
+    fm.card_id is not null::boolean as is_fusion,
+    lm.card_id is not null::boolean as is_link,
+    pm.card_id is not null::boolean as is_pendulum
+from 
+    target_card tc
+join card_types ct on tc.id = ct.card_id
+left join ritual_monsters rm on rm.card_id  = tc.id
+left join xyz_monsters xm on xm.card_id = tc.id
+left join synchro_monsters sm on sm.card_id = tc.id
+left join fusion_monsters fm on fm.card_id = tc.id
+left join link_monsters lm on lm.card_id = tc.id
+left join pendulum_monsters pm on pm.card_id = tc.id
+`
+
+type SelectMonsterTypeLineByCardIDRow struct {
+	ID         int64         `db:"id" json:"id"`
+	NeuronID   sql.NullInt64 `db:"neuron_id" json:"neuronId"`
+	OcgApiID   sql.NullInt64 `db:"ocg_api_id" json:"ocgApiId"`
+	IsNormal   bool          `db:"is_normal" json:"isNormal"`
+	IsEffect   bool          `db:"is_effect" json:"isEffect"`
+	IsToon     bool          `db:"is_toon" json:"isToon"`
+	IsSpirit   bool          `db:"is_spirit" json:"isSpirit"`
+	IsUnion    bool          `db:"is_union" json:"isUnion"`
+	IsDual     bool          `db:"is_dual" json:"isDual"`
+	IsTuner    bool          `db:"is_tuner" json:"isTuner"`
+	IsReverse  bool          `db:"is_reverse" json:"isReverse"`
+	IsRitual   bool          `db:"is_ritual" json:"isRitual"`
+	IsXyz      bool          `db:"is_xyz" json:"isXyz"`
+	IsSynchro  bool          `db:"is_synchro" json:"isSynchro"`
+	IsFusion   bool          `db:"is_fusion" json:"isFusion"`
+	IsLink     bool          `db:"is_link" json:"isLink"`
+	IsPendulum bool          `db:"is_pendulum" json:"isPendulum"`
+}
+
+// GetMonsterTypeLineByCardID ...
+func (q *Queries) SelectMonsterTypeLineByCardID(ctx context.Context, id int64) (SelectMonsterTypeLineByCardIDRow, error) {
+	row := q.db.QueryRowContext(ctx, selectMonsterTypeLineByCardID, id)
+	var i SelectMonsterTypeLineByCardIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.NeuronID,
+		&i.OcgApiID,
+		&i.IsNormal,
+		&i.IsEffect,
+		&i.IsToon,
+		&i.IsSpirit,
+		&i.IsUnion,
+		&i.IsDual,
+		&i.IsTuner,
+		&i.IsReverse,
+		&i.IsRitual,
+		&i.IsXyz,
+		&i.IsSynchro,
+		&i.IsFusion,
+		&i.IsLink,
+		&i.IsPendulum,
 	)
 	return i, err
 }
