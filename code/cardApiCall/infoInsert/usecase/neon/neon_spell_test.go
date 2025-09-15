@@ -1,4 +1,4 @@
-package usecase_test
+package neon_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"atomisu.com/ocg-statics/infoInsert/app"
 	"atomisu.com/ocg-statics/infoInsert/config"
 	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
-	"atomisu.com/ocg-statics/infoInsert/usecase"
+	"atomisu.com/ocg-statics/infoInsert/usecase/neon"
 	"github.com/samber/do"
 	"github.com/stretchr/testify/assert"
 )
@@ -33,7 +33,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neonUseCase := do.MustInvoke[usecase.NeonUseCase](injector)
+		neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
 
 		results, err := neonUseCase.InsertSpellCardInfo(context.Background(), sampleData)
 
@@ -71,7 +71,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neonUseCase := do.MustInvoke[usecase.NeonUseCase](injector)
+		neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
 
 		results, err := neonUseCase.InsertSpellCardInfo(context.Background(), sampleData)
 
@@ -108,7 +108,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neonUseCase := do.MustInvoke[usecase.NeonUseCase](injector)
+		neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
 
 		results, err := neonUseCase.InsertSpellCardInfo(context.Background(), sampleData)
 
@@ -145,7 +145,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neonUseCase := do.MustInvoke[usecase.NeonUseCase](injector)
+		neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
 
 		results, err := neonUseCase.InsertSpellCardInfo(context.Background(), sampleData)
 
@@ -182,7 +182,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neonUseCase := do.MustInvoke[usecase.NeonUseCase](injector)
+		neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
 
 		results, err := neonUseCase.InsertSpellCardInfo(context.Background(), sampleData)
 
@@ -219,7 +219,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		neonUseCase := do.MustInvoke[usecase.NeonUseCase](injector)
+		neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
 
 		results, err := neonUseCase.InsertSpellCardInfo(context.Background(), sampleData)
 

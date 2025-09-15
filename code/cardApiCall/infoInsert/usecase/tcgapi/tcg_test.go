@@ -1,4 +1,4 @@
-package usecase_test
+package tcgapi_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"atomisu.com/ocg-statics/infoInsert/app"
 	"atomisu.com/ocg-statics/infoInsert/config"
-	"atomisu.com/ocg-statics/infoInsert/usecase"
+	"atomisu.com/ocg-statics/infoInsert/usecase/tcgapi"
 	"github.com/samber/do"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +23,7 @@ func TestTcgUseCase(t *testing.T) {
 			"desc": "2+ Effect Monsters\r\nGains 500 ATK for each monster it points to. When your opponent activates a card or effect that targets a card(s) you control (Quick Effect): You can Tribute 1 monster this card points to; negate the activation, and if you do, destroy that card.",
 		}
 
-		tcgUseCase := do.MustInvoke[usecase.TcgUseCase](injector)
+		tcgUseCase := do.MustInvoke[tcgapi.TcgUseCase](injector)
 
 		results, err := tcgUseCase.GetCardInfoByEnName(context.Background(), "Decode Talker")
 		assert.NoError(t, err)
@@ -37,7 +37,7 @@ func TestTcgUseCase(t *testing.T) {
 		injector := app.SetupDIContainer()
 		do.Override(injector, config.TestDbConnection)
 
-		tcgUseCase := do.MustInvoke[usecase.TcgUseCase](injector)
+		tcgUseCase := do.MustInvoke[tcgapi.TcgUseCase](injector)
 
 		_, err := tcgUseCase.GetCardInfoByEnName(context.Background(), "Decode Tolker")
 		assert.Error(t, err)

@@ -1,4 +1,4 @@
-package usecase
+package neon
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 
 func (n *neonUseCaseImpl) InsertSpellCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error) {
 
-	tr := transaction.NewTx(n.dbConn.DB)
+	tr := transaction.NewTx(n.ProduceConnDB())
 
 	result := int64(0)
 
@@ -49,6 +49,6 @@ func (n *neonUseCaseImpl) InsertSpellCardInfo(ctx context.Context, cardInfo card
 }
 
 func (n *neonUseCaseImpl) GetSpellCardByID(ctx context.Context, cardID int64) (carddto.SpellCardSelectResult, error) {
-	spellRepo := repository.NewSpellRepository(sqlc_gen.New(n.dbConn.DB))
+	spellRepo := repository.NewSpellRepository(sqlc_gen.New(n.ProduceConnDB()))
 	return spellRepo.GetSpellByCardID(ctx, cardID)
 }

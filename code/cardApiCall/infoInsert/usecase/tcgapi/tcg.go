@@ -1,4 +1,4 @@
-package usecase
+package tcgapi
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"atomisu.com/ocg-statics/infoInsert/http"
+	"atomisu.com/ocg-statics/infoInsert/usecase"
 	"github.com/samber/do"
 )
 
@@ -33,22 +34,19 @@ type TcgApiResponse struct {
 
 // TcgUseCase is an interface for the TcgUseCase.
 type TcgUseCase interface {
-	UseCase
+	usecase.UseCase
 	GetCardInfoByEnName(ctx context.Context, name string) (TcgApiCard, error)
 }
 
 type tcgUseCaseImpl struct {
-	*useCase
+	*usecase.UseCaseImpl
 }
 
 // NewTcgUseCase is a constructor for TcgUseCase.
 func NewTcgUseCase(i *do.Injector) (TcgUseCase, error) {
-	return NewUseCase(i, func(u *useCase) TcgUseCase {
+	return usecase.NewUseCase(i, func(u *usecase.UseCaseImpl) TcgUseCase {
 		return &tcgUseCaseImpl{u}
 	})
-}
-
-func (t *tcgUseCaseImpl) emptyFunc() {
 }
 
 func (t *tcgUseCaseImpl) GetCardInfoByEnName(ctx context.Context, name string) (TcgApiCard, error) {
