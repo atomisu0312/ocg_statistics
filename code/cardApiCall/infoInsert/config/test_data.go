@@ -7,7 +7,7 @@ import (
 )
 
 const truncateSQL = `
-	TRUNCATE TABLE cards, traps, spells RESTART IDENTITY CASCADE;
+	TRUNCATE TABLE cards, traps, spells, monsters, ritual_monsters, xyz_monsters, synchro_monsters, fusion_monsters, link_monsters, pendulum_monsters RESTART IDENTITY CASCADE;
 `
 
 func BeforeEachForUnitTest() {
