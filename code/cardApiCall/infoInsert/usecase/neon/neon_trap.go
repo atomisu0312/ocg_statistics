@@ -28,8 +28,6 @@ func (n *neonUseCaseImpl) InsertTrapCardInfo(ctx context.Context, cardInfo cardr
 			return fmt.Errorf("error create card %w", err)
 		}
 
-		fmt.Println("card", card)
-
 		// トラップ種別の取得
 		trapType, err := trapTypeRepo.GetTrapTypeByNameEn(ctx, cardInfo.Race)
 		if err != nil {

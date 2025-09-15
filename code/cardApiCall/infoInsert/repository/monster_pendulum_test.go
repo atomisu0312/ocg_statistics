@@ -93,8 +93,6 @@ func TestGetPendulumMonsterByCardID(t *testing.T) {
 		// Now retrieve it
 		retrievedMonsterResult, err := repoPendulum.GetPendulumMonsterByCardID(ctx, testCardID)
 
-		fmt.Println(retrievedMonsterResult)
-
 		assert.NoError(t, err)
 		assert.NotEqual(t, cardrecord.PendulumMonsterSelectResult{}, retrievedMonsterResult)
 		assert.Equal(t, testCardID, retrievedMonsterResult.ID)

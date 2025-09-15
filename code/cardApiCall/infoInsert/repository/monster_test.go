@@ -3,7 +3,6 @@ package repository_test
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
@@ -68,7 +67,6 @@ func TestGetMonsterByCardID(t *testing.T) {
 		insertedMonster, err := repo.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
 		assert.NoError(t, err)
 		assert.NotEqual(t, sqlc_gen.Monster{}, insertedMonster)
-		fmt.Println(insertedMonster)
 
 		// Now retrieve it
 		retrievedMonsterResult, err := repo.GetMonsterByCardID(ctx, testCardID)
