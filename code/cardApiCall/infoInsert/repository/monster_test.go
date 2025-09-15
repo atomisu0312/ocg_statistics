@@ -3,7 +3,6 @@ package repository_test
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
@@ -62,13 +61,12 @@ func TestGetMonsterByCardID(t *testing.T) {
 		testAttack := int32(2000)
 		testDefense := int32(1000)
 		testLevel := int32(6)
-		testTypeIDs := []int32{3, 4}
+		testTypeIDs := []int32{2, 4}
 
 		// Insert a monster first
 		insertedMonster, err := repo.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
 		assert.NoError(t, err)
 		assert.NotEqual(t, sqlc_gen.Monster{}, insertedMonster)
-		fmt.Println(insertedMonster)
 
 		// Now retrieve it
 		retrievedMonsterResult, err := repo.GetMonsterByCardID(ctx, testCardID)
@@ -82,8 +80,8 @@ func TestGetMonsterByCardID(t *testing.T) {
 		assert.Equal(t, insertedMonster.Attack.Int32, retrievedMonsterResult.Attack)
 		assert.Equal(t, insertedMonster.Defense.Int32, retrievedMonsterResult.Defense)
 		assert.Equal(t, insertedMonster.Level.Int32, retrievedMonsterResult.Level)
-		assert.Equal(t, []string{"トゥーン", "スピリット"}, retrievedMonsterResult.TypeNamesJa)
-		assert.Equal(t, []string{"Toon", "Spirit"}, retrievedMonsterResult.TypeNamesEn)
+		assert.Equal(t, []string{"効果", "スピリット"}, retrievedMonsterResult.TypeNamesJa)
+		assert.Equal(t, []string{"Effect", "Spirit"}, retrievedMonsterResult.TypeNamesEn)
 	})
 
 	t.Run("異常系01: 存在しないモンスターを取得", func(t *testing.T) {
