@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
+	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
 	"go.uber.org/zap"
 )
@@ -13,7 +13,7 @@ import (
 // SpellRepository defines the interface for spell card database operations.
 type SpellRepository interface {
 	Repository
-	GetSpellByCardID(ctx context.Context, cardId int64) (carddto.SpellCardSelectResult, error)
+	GetSpellByCardID(ctx context.Context, cardId int64) (cardrecord.SpellCardSelectResult, error)
 	InsertSpell(ctx context.Context, cardId int64, spellTypeId int32) (sqlc_gen.Spell, error)
 }
 
@@ -33,17 +33,17 @@ func NewSpellRepository(q *sqlc_gen.Queries) SpellRepository {
 }
 
 // GetSpellByCardID retrieves a spell card by its card ID.
-func (r *spellRepositoryImpl) GetSpellByCardID(ctx context.Context, cardId int64) (carddto.SpellCardSelectResult, error) {
+func (r *spellRepositoryImpl) GetSpellByCardID(ctx context.Context, cardId int64) (cardrecord.SpellCardSelectResult, error) {
 	start := time.Now()
 	defer r.logDBOperation("GetSpellByCardID", start, zap.Int64("card_id", cardId))
 
 	spell, err := r.queries.SelectFullSpellCardInfoByCardID(ctx, cardId)
 	if err != nil {
 		r.logDBError("GetSpellByCardID", err, zap.Int64("card_id", cardId))
-		return carddto.SpellCardSelectResult{}, err
+		return cardrecord.SpellCardSelectResult{}, err
 	}
-	var result carddto.SpellCardSelectResult
-	result = *result.FromSelectFullSpellCardInfoRow(carddto.SelectFullSpellCardInfoRow(spell))
+	var result cardrecord.SpellCardSelectResult
+	result = *result.FromSelectFullSpellCardInfoRow(cardrecord.SelectFullSpellCardInfoRow(spell))
 	r.logDBResult("GetSpellByCardID", result, zap.Int64("card_id", cardId))
 	return result, nil
 }
@@ -54,7 +54,7 @@ func (r *spellRepositoryImpl) InsertSpell(ctx context.Context, cardId int64, spe
 	defer r.logDBOperation("InsertSpell", start, zap.Int64("card_id", cardId), zap.Int32("spell_type_id", spellTypeId))
 
 	spell, err := r.queries.InsertSpell(ctx, sqlc_gen.InsertSpellParams{
-		CardID:     cardId,
+		CardID:      cardId,
 		SpellTypeID: sql.NullInt32{Int32: spellTypeId, Valid: true},
 	})
 	if err != nil {

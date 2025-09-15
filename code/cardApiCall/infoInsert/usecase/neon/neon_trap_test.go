@@ -6,7 +6,7 @@ import (
 
 	"atomisu.com/ocg-statics/infoInsert/app"
 	"atomisu.com/ocg-statics/infoInsert/config"
-	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
+	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/usecase/neon"
 	"github.com/samber/do"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +16,7 @@ func TestNeonTrapUseCase(t *testing.T) {
 	//t.Parallel()
 
 	t.Run("カード情報の挿入&取得テスト（カウンター罠）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Solemn Judgment",
 			NameJa:   "神の宣告",
 			DescEn:   "Sample Text.",
@@ -54,7 +54,7 @@ func TestNeonTrapUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の挿入&取得テスト（永続罠）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Skill Drain",
 			NameJa:   "スキルドレイン",
 			DescEn:   "Sample Text.",
@@ -92,7 +92,7 @@ func TestNeonTrapUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の挿入&取得テスト（通常罠）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Welcome Labrynth",
 			NameJa:   "ウェルカム・ラビュリンス",
 			DescEn:   "Sample Text.",

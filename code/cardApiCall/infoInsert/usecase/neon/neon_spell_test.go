@@ -6,7 +6,7 @@ import (
 
 	"atomisu.com/ocg-statics/infoInsert/app"
 	"atomisu.com/ocg-statics/infoInsert/config"
-	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
+	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/usecase/neon"
 	"github.com/samber/do"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +16,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 	//t.Parallel()
 
 	t.Run("カード情報の挿入&取得テスト（通常魔法）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Raigeki",
 			NameJa:   "サンダー・ボルト",
 			DescEn:   "Sample Text.",
@@ -54,7 +54,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の挿入&取得テスト（永続魔法）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Continuous Spell Card",
 			NameJa:   "永続魔法カード",
 			DescEn:   "Sample Text for Continuous Spell.",
@@ -91,7 +91,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の挿入&取得テスト（装備魔法）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Equip Spell Card",
 			NameJa:   "装備魔法カード",
 			DescEn:   "Sample Text for Equip Spell.",
@@ -128,7 +128,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の挿入&取得テスト（フィールド魔法）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Field Spell Card",
 			NameJa:   "フィールド魔法カード",
 			DescEn:   "Sample Text for Field Spell.",
@@ -165,7 +165,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の挿入&取得テスト（速攻魔法）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Quick-Play Spell Card",
 			NameJa:   "速攻魔法カード",
 			DescEn:   "Sample Text for Quick-Play Spell.",
@@ -202,7 +202,7 @@ func TestNeonSpellUseCase(t *testing.T) {
 	})
 
 	t.Run("カード情報の挿入&取得テスト（儀式魔法）", func(t *testing.T) {
-		sampleData := carddto.StandardCard{
+		sampleData := cardrecord.StandardCard{
 			NameEn:   "Ritual Spell Card",
 			NameJa:   "儀式魔法カード",
 			DescEn:   "Sample Text for Ritual Spell.",

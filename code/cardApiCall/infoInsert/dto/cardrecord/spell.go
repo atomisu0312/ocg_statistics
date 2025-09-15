@@ -1,4 +1,4 @@
-package carddto
+package cardrecord
 
 import (
 	"database/sql"
@@ -13,20 +13,20 @@ type SpellCardSelectResult struct {
 }
 
 type SelectFullSpellCardInfoRow struct {
-	ID               int64          `db:"id" json:"id"`
-	NeuronID         sql.NullInt64  `db:"neuron_id" json:"neuronId"`
-	OcgApiID         sql.NullInt64  `db:"ocg_api_id" json:"ocgApiId"`
-	NameJa           sql.NullString `db:"name_ja" json:"nameJa"`
-	NameEn           sql.NullString `db:"name_en" json:"nameEn"`
-	CardTextJa       sql.NullString `db:"card_text_ja" json:"cardTextJa"`
-	CardTextEn       sql.NullString `db:"card_text_en" json:"cardTextEn"`
-	Dataowner        sql.NullString `db:"dataowner" json:"dataowner"`
-	RegistDate       sql.NullTime   `db:"regist_date" json:"registDate"`
-	EnableStartDate  sql.NullTime   `db:"enable_start_date" json:"enableStartDate"`
-	EnableEndDate    sql.NullTime   `db:"enable_end_date" json:"enableEndDate"`
-	Version          sql.NullInt64  `db:"version" json:"version"`
-	SpellTypeNameJa  sql.NullString `db:"spell_type_name_ja" json:"spellTypeNameJa"`
-	SpellTypeNameEn  sql.NullString `db:"spell_type_name_en" json:"spellTypeNameEn"`
+	ID              int64          `db:"id" json:"id"`
+	NeuronID        sql.NullInt64  `db:"neuron_id" json:"neuronId"`
+	OcgApiID        sql.NullInt64  `db:"ocg_api_id" json:"ocgApiId"`
+	NameJa          sql.NullString `db:"name_ja" json:"nameJa"`
+	NameEn          sql.NullString `db:"name_en" json:"nameEn"`
+	CardTextJa      sql.NullString `db:"card_text_ja" json:"cardTextJa"`
+	CardTextEn      sql.NullString `db:"card_text_en" json:"cardTextEn"`
+	Dataowner       sql.NullString `db:"dataowner" json:"dataowner"`
+	RegistDate      sql.NullTime   `db:"regist_date" json:"registDate"`
+	EnableStartDate sql.NullTime   `db:"enable_start_date" json:"enableStartDate"`
+	EnableEndDate   sql.NullTime   `db:"enable_end_date" json:"enableEndDate"`
+	Version         sql.NullInt64  `db:"version" json:"version"`
+	SpellTypeNameJa sql.NullString `db:"spell_type_name_ja" json:"spellTypeNameJa"`
+	SpellTypeNameEn sql.NullString `db:"spell_type_name_en" json:"spellTypeNameEn"`
 }
 
 func (s *SpellCardSelectResult) FromSelectFullSpellCardInfoRow(row SelectFullSpellCardInfoRow) *SpellCardSelectResult {

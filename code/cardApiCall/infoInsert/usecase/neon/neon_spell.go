@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
+	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/repository"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
 	"atomisu.com/ocg-statics/infoInsert/transaction"
 )
 
-func (n *neonUseCaseImpl) InsertSpellCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error) {
+func (n *neonUseCaseImpl) InsertSpellCardInfo(ctx context.Context, cardInfo cardrecord.StandardCard) (int64, error) {
 
 	tr := transaction.NewTx(n.ProduceConnDB())
 
@@ -48,7 +48,7 @@ func (n *neonUseCaseImpl) InsertSpellCardInfo(ctx context.Context, cardInfo card
 	return result, err
 }
 
-func (n *neonUseCaseImpl) GetSpellCardByID(ctx context.Context, cardID int64) (carddto.SpellCardSelectResult, error) {
+func (n *neonUseCaseImpl) GetSpellCardByID(ctx context.Context, cardID int64) (cardrecord.SpellCardSelectResult, error) {
 	spellRepo := repository.NewSpellRepository(sqlc_gen.New(n.ProduceConnDB()))
 	return spellRepo.GetSpellByCardID(ctx, cardID)
 }

@@ -3,7 +3,7 @@ package neon
 import (
 	"context"
 
-	"atomisu.com/ocg-statics/infoInsert/dto/carddto"
+	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/usecase"
 	"github.com/samber/do"
 )
@@ -16,10 +16,10 @@ type neonUseCaseImpl struct {
 // NeonUseCase は、NeonUseCaseのインターフェースです。
 type NeonUseCase interface {
 	usecase.UseCase
-	InsertTrapCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error)
-	GetTrapCardByID(ctx context.Context, cardID int64) (carddto.TrapCardSelectResult, error)
-	InsertSpellCardInfo(ctx context.Context, cardInfo carddto.StandardCard) (int64, error)
-	GetSpellCardByID(ctx context.Context, cardID int64) (carddto.SpellCardSelectResult, error)
+	InsertTrapCardInfo(ctx context.Context, cardInfo cardrecord.StandardCard) (int64, error)
+	GetTrapCardByID(ctx context.Context, cardID int64) (cardrecord.TrapCardSelectResult, error)
+	InsertSpellCardInfo(ctx context.Context, cardInfo cardrecord.StandardCard) (int64, error)
+	GetSpellCardByID(ctx context.Context, cardID int64) (cardrecord.SpellCardSelectResult, error)
 }
 
 // NewNeonUseCase は、NeonUseCaseのコンストラクタです。
