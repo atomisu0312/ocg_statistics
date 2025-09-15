@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"time"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
@@ -43,8 +42,7 @@ func (r *monsterRepositoryImpl) GetMonsterByCardID(ctx context.Context, cardId i
 		r.logDBError("GetMonsterByCardID", err, zap.Int64("card_id", cardId))
 		return cardrecord.MonsterCardSelectResult{}, err
 	}
-	fmt.Println("monster~~~~~~~~~~~~~~~~~~~~")
-	fmt.Println(monster)
+
 	var result cardrecord.MonsterCardSelectResult
 	result = *result.FromSelectFullMonsterCardInfoRow(cardrecord.SelectFullMonsterCardInfoRow{
 		ID:              monster.ID,
