@@ -20,9 +20,6 @@ func TestPendulumMonsterInsert(t *testing.T) {
 		defer cleanup()
 
 		ctx := context.Background()
-		q := sqlc_gen.New(dbConn)
-		repoMonster := repository.NewMonsterRepository(q)
-		repoPendulum := repository.NewPendulumMonsterRepository(q)
 
 		testCardID := card.ID       // Unique card ID for testing
 		testRaceID := int32(1)      // Example race ID
@@ -34,9 +31,12 @@ func TestPendulumMonsterInsert(t *testing.T) {
 		testScale := int32(1)
 		testPendulumTextJa := "ドラゴン族"
 		testPendulumTextEn := "Dragon"
+
 		tr := transaction.NewTx(dbConn.DB)
 		var insertedMonster sqlc_gen.PendulumMonster
 		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			repoMonster := repository.NewMonsterRepository(q)
+			repoPendulum := repository.NewPendulumMonsterRepository(q)
 			monster, err := repoMonster.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
 			if err != nil {
 				return fmt.Errorf("error inserting monster: %w", err)
@@ -61,9 +61,6 @@ func TestGetPendulumMonsterByCardID(t *testing.T) {
 		defer cleanup()
 
 		ctx := context.Background()
-		q := sqlc_gen.New(dbConn)
-		repoMonster := repository.NewMonsterRepository(q)
-		repoPendulum := repository.NewPendulumMonsterRepository(q)
 
 		testCardID := card.ID // Unique card ID for testing
 		testRaceID := int32(2)
@@ -75,8 +72,11 @@ func TestGetPendulumMonsterByCardID(t *testing.T) {
 		testScale := int32(1)
 		testPendulumTextJa := "ドラゴン族"
 		testPendulumTextEn := "Dragon"
+
 		tr := transaction.NewTx(dbConn.DB)
 		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			repoMonster := repository.NewMonsterRepository(q)
+			repoPendulum := repository.NewPendulumMonsterRepository(q)
 			monster, err := repoMonster.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
 			if err != nil {
 				return fmt.Errorf("error inserting monster: %w", err)
@@ -88,6 +88,8 @@ func TestGetPendulumMonsterByCardID(t *testing.T) {
 			return nil
 		})
 
+		q := sqlc_gen.New(dbConn)
+		repoPendulum := repository.NewPendulumMonsterRepository(q)
 		// Now retrieve it
 		retrievedMonsterResult, err := repoPendulum.GetPendulumMonsterByCardID(ctx, testCardID)
 
