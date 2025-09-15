@@ -34,11 +34,11 @@ func NewFusionMonsterRepository(q *sqlc_gen.Queries) FusionMonsterRepository {
 // GetMonsterByCardID retrieves a monster card by its card ID.
 func (r *fusionMonsterRepositoryImpl) GetFusionMonsterByCardID(ctx context.Context, cardId int64) (cardrecord.FusionMonsterSelectResult, error) {
 	start := time.Now()
-	defer r.logDBOperation("GetMonsterByCardID", start, zap.Int64("card_id", cardId))
+	defer r.logDBOperation("GetFusionMonsterByCardID", start, zap.Int64("card_id", cardId))
 
 	monster, err := r.queries.SelectFullMonsterCardInfoByCardID(ctx, cardId)
 	if err != nil {
-		r.logDBError("GetMonsterByCardID", err, zap.Int64("card_id", cardId))
+		r.logDBError("GetFusionMonsterByCardID", err, zap.Int64("card_id", cardId))
 		return cardrecord.FusionMonsterSelectResult{}, err
 	}
 
@@ -68,7 +68,7 @@ func (r *fusionMonsterRepositoryImpl) GetFusionMonsterByCardID(ctx context.Conte
 			AttributeNameEn: monster.AttributeNameEn,
 		},
 	})
-	r.logDBResult("GetMonsterByCardID", result, zap.Int64("card_id", cardId))
+	r.logDBResult("GetFusionMonsterByCardID", result, zap.Int64("card_id", cardId))
 	return result, nil
 }
 

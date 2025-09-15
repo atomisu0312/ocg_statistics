@@ -20,9 +20,6 @@ func TestFusionMonsterInsert(t *testing.T) {
 		defer cleanup()
 
 		ctx := context.Background()
-		q := sqlc_gen.New(dbConn)
-		repoMonster := repository.NewMonsterRepository(q)
-		repoFusion := repository.NewFusionMonsterRepository(q)
 
 		testCardID := card.ID       // Unique card ID for testing
 		testRaceID := int32(1)      // Example race ID
@@ -35,6 +32,8 @@ func TestFusionMonsterInsert(t *testing.T) {
 		tr := transaction.NewTx(dbConn.DB)
 		var insertedMonster sqlc_gen.FusionMonster
 		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			repoMonster := repository.NewMonsterRepository(q)
+			repoFusion := repository.NewFusionMonsterRepository(q)
 			monster, err := repoMonster.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
 			if err != nil {
 				return fmt.Errorf("error inserting monster: %w", err)
@@ -59,9 +58,6 @@ func TestGetFusionMonsterByCardID(t *testing.T) {
 		defer cleanup()
 
 		ctx := context.Background()
-		q := sqlc_gen.New(dbConn)
-		repoMonster := repository.NewMonsterRepository(q)
-		repoFusion := repository.NewFusionMonsterRepository(q)
 
 		testCardID := card.ID // Unique card ID for testing
 		testRaceID := int32(2)
@@ -73,6 +69,8 @@ func TestGetFusionMonsterByCardID(t *testing.T) {
 
 		tr := transaction.NewTx(dbConn.DB)
 		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			repoMonster := repository.NewMonsterRepository(q)
+			repoFusion := repository.NewFusionMonsterRepository(q)
 			monster, err := repoMonster.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
 			if err != nil {
 				return fmt.Errorf("error inserting monster: %w", err)
@@ -84,8 +82,11 @@ func TestGetFusionMonsterByCardID(t *testing.T) {
 			return nil
 		})
 
+		q := sqlc_gen.New(dbConn)
+		repoFusion := repository.NewFusionMonsterRepository(q)
 		// Now retrieve it
 		retrievedMonsterResult, err := repoFusion.GetFusionMonsterByCardID(ctx, testCardID)
+
 		assert.NoError(t, err)
 		assert.NotEqual(t, cardrecord.FusionMonsterSelectResult{}, retrievedMonsterResult)
 		assert.Equal(t, testCardID, retrievedMonsterResult.ID)
@@ -106,11 +107,11 @@ func TestGetFusionMonsterByCardID(t *testing.T) {
 
 		ctx := context.Background()
 		q := sqlc_gen.New(dbConn)
-		repo := repository.NewMonsterRepository(q)
+		repo := repository.NewFusionMonsterRepository(q)
 
 		nonExistentCardID := int64(99999998) // A card ID that should not exist
 
-		_, err := repo.GetMonsterByCardID(ctx, nonExistentCardID)
+		_, err := repo.GetFusionMonsterByCardID(ctx, nonExistentCardID)
 		assert.Error(t, err)
 		assert.Equal(t, sql.ErrNoRows, err)
 	})

@@ -20,9 +20,6 @@ func TestXyzMonsterInsert(t *testing.T) {
 		defer cleanup()
 
 		ctx := context.Background()
-		q := sqlc_gen.New(dbConn)
-		repoMonster := repository.NewMonsterRepository(q)
-		repoXyz := repository.NewXyzMonsterRepository(q)
 
 		testCardID := card.ID       // Unique card ID for testing
 		testRaceID := int32(1)      // Example race ID
@@ -35,6 +32,8 @@ func TestXyzMonsterInsert(t *testing.T) {
 		tr := transaction.NewTx(dbConn.DB)
 		var insertedMonster sqlc_gen.XyzMonster
 		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			repoMonster := repository.NewMonsterRepository(q)
+			repoXyz := repository.NewXyzMonsterRepository(q)
 			monster, err := repoMonster.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
 			if err != nil {
 				return fmt.Errorf("error inserting monster: %w", err)
@@ -59,9 +58,6 @@ func TestGetXyzMonsterByCardID(t *testing.T) {
 		defer cleanup()
 
 		ctx := context.Background()
-		q := sqlc_gen.New(dbConn)
-		repoMonster := repository.NewMonsterRepository(q)
-		repoXyz := repository.NewXyzMonsterRepository(q)
 
 		testCardID := card.ID // Unique card ID for testing
 		testRaceID := int32(2)
@@ -73,6 +69,8 @@ func TestGetXyzMonsterByCardID(t *testing.T) {
 
 		tr := transaction.NewTx(dbConn.DB)
 		err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+			repoMonster := repository.NewMonsterRepository(q)
+			repoXyz := repository.NewXyzMonsterRepository(q)
 			monster, err := repoMonster.InsertMonster(ctx, testCardID, testRaceID, testAttributeID, testAttack, testDefense, testLevel, testTypeIDs)
 			if err != nil {
 				return fmt.Errorf("error inserting monster: %w", err)
@@ -84,6 +82,8 @@ func TestGetXyzMonsterByCardID(t *testing.T) {
 			return nil
 		})
 
+		q := sqlc_gen.New(dbConn)
+		repoXyz := repository.NewXyzMonsterRepository(q)
 		// Now retrieve it
 		retrievedMonsterResult, err := repoXyz.GetXyzMonsterByCardID(ctx, testCardID)
 		assert.NoError(t, err)
