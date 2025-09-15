@@ -36,7 +36,7 @@ func (r *fusionMonsterRepositoryImpl) GetFusionMonsterByCardID(ctx context.Conte
 	start := time.Now()
 	defer r.logDBOperation("GetFusionMonsterByCardID", start, zap.Int64("card_id", cardId))
 
-	monster, err := r.queries.SelectFullMonsterCardInfoByCardID(ctx, cardId)
+	monster, err := r.queries.SelectFullFusionMonsterCardInfoByCardID(ctx, cardId)
 	if err != nil {
 		r.logDBError("GetFusionMonsterByCardID", err, zap.Int64("card_id", cardId))
 		return cardrecord.FusionMonsterSelectResult{}, err
