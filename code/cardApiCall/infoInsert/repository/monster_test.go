@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"testing"
 
-	"atomisu.com/ocg-statics/infoInsert/config"
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/repository"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
-	"github.com/samber/do"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -89,12 +87,8 @@ func TestGetMonsterByCardID(t *testing.T) {
 	})
 
 	t.Run("異常系01: 存在しないモンスターを取得", func(t *testing.T) {
-		config.BeforeEachForUnitTest()
-		defer config.AfterEachForUnitTest()
-
-		injector := do.New()
-		do.Provide(injector, config.TestDbConnection)
-		dbConn := do.MustInvoke[*config.DbConn](injector)
+		dbConn, _, cleanup := setupTest(t)
+		defer cleanup()
 
 		ctx := context.Background()
 		q := sqlc_gen.New(dbConn)
