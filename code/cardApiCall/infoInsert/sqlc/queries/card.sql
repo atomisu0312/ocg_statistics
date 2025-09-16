@@ -40,3 +40,11 @@ WHERE id = $1;
 -- name: SelectByCardId :one
 SELECT * FROM cards
 WHERE id = $1;
+
+-- name: SelectByCardNameEn :one
+SELECT * FROM cards
+WHERE name_en = $1;
+
+-- name: SelectByCardNameJa :one
+SELECT * FROM cards
+WHERE name_ja = $1;
