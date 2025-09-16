@@ -168,6 +168,56 @@ func (q *Queries) SelectByCardId(ctx context.Context, id int64) (Card, error) {
 	return i, err
 }
 
+const selectByCardNameEn = `-- name: SelectByCardNameEn :one
+SELECT id, neuron_id, ocg_api_id, name_ja, name_en, card_text_ja, card_text_en, dataowner, regist_date, enable_start_date, enable_end_date, version FROM cards
+WHERE name_en = $1
+`
+
+func (q *Queries) SelectByCardNameEn(ctx context.Context, nameEn sql.NullString) (Card, error) {
+	row := q.db.QueryRowContext(ctx, selectByCardNameEn, nameEn)
+	var i Card
+	err := row.Scan(
+		&i.ID,
+		&i.NeuronID,
+		&i.OcgApiID,
+		&i.NameJa,
+		&i.NameEn,
+		&i.CardTextJa,
+		&i.CardTextEn,
+		&i.Dataowner,
+		&i.RegistDate,
+		&i.EnableStartDate,
+		&i.EnableEndDate,
+		&i.Version,
+	)
+	return i, err
+}
+
+const selectByCardNameJa = `-- name: SelectByCardNameJa :one
+SELECT id, neuron_id, ocg_api_id, name_ja, name_en, card_text_ja, card_text_en, dataowner, regist_date, enable_start_date, enable_end_date, version FROM cards
+WHERE name_ja = $1
+`
+
+func (q *Queries) SelectByCardNameJa(ctx context.Context, nameJa sql.NullString) (Card, error) {
+	row := q.db.QueryRowContext(ctx, selectByCardNameJa, nameJa)
+	var i Card
+	err := row.Scan(
+		&i.ID,
+		&i.NeuronID,
+		&i.OcgApiID,
+		&i.NameJa,
+		&i.NameEn,
+		&i.CardTextJa,
+		&i.CardTextEn,
+		&i.Dataowner,
+		&i.RegistDate,
+		&i.EnableStartDate,
+		&i.EnableEndDate,
+		&i.Version,
+	)
+	return i, err
+}
+
 const updateCard = `-- name: UpdateCard :one
 UPDATE cards
 SET
