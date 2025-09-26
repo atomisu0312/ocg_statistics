@@ -79,13 +79,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		RaceNameJa := "天使族"
 		TypeLines := []string{"Normal"}
 
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 
 	})
 
@@ -114,13 +110,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "獣族"
 		TypeLines := []string{"Normal"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		// results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		// assert.NoError(t, err)
-		// assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（効果モンスター）", func(t *testing.T) {
