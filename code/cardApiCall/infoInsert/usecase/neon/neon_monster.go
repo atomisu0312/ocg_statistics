@@ -100,8 +100,8 @@ func (n *neonUseCaseImpl) GetMonsterTypeLinesEnByCardID(ctx context.Context, car
 	if typeLineSelectResult.IsUnion {
 		typeLineNames = append(typeLineNames, "Union")
 	}
-	if typeLineSelectResult.IsDual {
-		typeLineNames = append(typeLineNames, "Dual")
+	if typeLineSelectResult.IsGemini {
+		typeLineNames = append(typeLineNames, "Gemini")
 	}
 	if typeLineSelectResult.IsTuner {
 		typeLineNames = append(typeLineNames, "Tuner")
