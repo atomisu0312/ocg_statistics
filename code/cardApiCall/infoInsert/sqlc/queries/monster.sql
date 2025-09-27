@@ -533,7 +533,7 @@ select
     'Toon' = ANY(ct.type_names_en)::boolean as is_toon,
     'Spirit' = ANY(ct.type_names_en)::boolean as is_spirit,
     'Union' = ANY(ct.type_names_en)::boolean as is_union,
-    'Gemini' = ANY(ct.type_names_en)::boolean as is_dual,
+    'Gemini' = ANY(ct.type_names_en)::boolean as is_gemini,
     'Tuner' = ANY(ct.type_names_en)::boolean as is_tuner,
     'Reverse' = ANY(ct.type_names_en)::boolean as is_reverse,
     rm.card_id is not null::boolean as is_ritual,

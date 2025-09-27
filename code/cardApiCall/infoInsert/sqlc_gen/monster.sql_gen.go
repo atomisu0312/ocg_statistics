@@ -1214,7 +1214,7 @@ select
     'Toon' = ANY(ct.type_names_en)::boolean as is_toon,
     'Spirit' = ANY(ct.type_names_en)::boolean as is_spirit,
     'Union' = ANY(ct.type_names_en)::boolean as is_union,
-    'Gemini' = ANY(ct.type_names_en)::boolean as is_dual,
+    'Gemini' = ANY(ct.type_names_en)::boolean as is_gemini,
     'Tuner' = ANY(ct.type_names_en)::boolean as is_tuner,
     'Reverse' = ANY(ct.type_names_en)::boolean as is_reverse,
     rm.card_id is not null::boolean as is_ritual,
@@ -1243,7 +1243,7 @@ type SelectMonsterTypeLineByCardIDRow struct {
 	IsToon     bool          `db:"is_toon" json:"isToon"`
 	IsSpirit   bool          `db:"is_spirit" json:"isSpirit"`
 	IsUnion    bool          `db:"is_union" json:"isUnion"`
-	IsGemini   bool          `db:"is_dual" json:"isGemini"`
+	IsGemini   bool          `db:"is_gemini" json:"isGemini"`
 	IsTuner    bool          `db:"is_tuner" json:"isTuner"`
 	IsReverse  bool          `db:"is_reverse" json:"isReverse"`
 	IsRitual   bool          `db:"is_ritual" json:"isRitual"`
