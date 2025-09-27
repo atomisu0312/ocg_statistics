@@ -16,10 +16,15 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 
 	result := int64(0)
 
+	// 以下の一連の流れをトランザクション境界内で実行
 	err := tr.ExecTx(ctx, func(q *sqlc_gen.Queries) error {
+
 		// リポジトリの準備
 		cardRepo := repository.NewCardRepository(q)
 		monsterRepo := repository.NewMonsterRepository(q)
+		attributeRepo := repository.NewAttributeRepository(q)
+		raceRepo := repository.NewRaceRepository(q)
+		monsterTypeRepo := repository.NewMonsterTypeRepository(q)
 
 		// カードの挿入
 		card, err := cardRepo.InsertCard(ctx, cardInfo.ToInsertCardParamsExceptMonster())
@@ -27,12 +32,33 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 			return fmt.Errorf("error create card %w", err)
 		}
 
-		raceId := int32(9)      // TODO
-		attributeId := int32(1) // TODO
-		typeIds := []int32{1}   // TODO
+		// 種族をIDに変換
+		raceEntity, err := raceRepo.GetRaceByNameEn(ctx, cardInfo.Race)
+		if err != nil {
+			return fmt.Errorf("error get race %w", err)
+		}
+		raceID := raceEntity.ID
+
+		// 属性をIDに変換
+		attributeEntity, err := attributeRepo.GetAttributeByNameEn(ctx, cardInfo.Attribute)
+		if err != nil {
+			return fmt.Errorf("error get attribute %w", err)
+		}
+		attributeID := attributeEntity.ID
+
+		// モンスターのタイプをIDに変換
+		typeIDs := []int32{}
+		for _, typeLine := range cardInfo.TypeLines {
+			typeEntity, err := monsterTypeRepo.GetMonsterTypeByNameEn(ctx, typeLine)
+			if err != nil {
+				//return fmt.Errorf("error get monster type %w", err)
+				continue
+			}
+			typeIDs = append(typeIDs, typeEntity.ID)
+		}
 
 		// モンスターの挿入
-		_, err = monsterRepo.InsertMonster(ctx, card.ID, raceId, attributeId, cardInfo.Atk, cardInfo.Def, cardInfo.Level, typeIds)
+		_, err = monsterRepo.InsertMonster(ctx, card.ID, raceID, attributeID, cardInfo.Atk, cardInfo.Def, cardInfo.Level, typeIDs)
 		if err != nil {
 			return fmt.Errorf("error create monster %w", err)
 		}
@@ -74,8 +100,8 @@ func (n *neonUseCaseImpl) GetMonsterTypeLinesEnByCardID(ctx context.Context, car
 	if typeLineSelectResult.IsUnion {
 		typeLineNames = append(typeLineNames, "Union")
 	}
-	if typeLineSelectResult.IsDual {
-		typeLineNames = append(typeLineNames, "Dual")
+	if typeLineSelectResult.IsGemini {
+		typeLineNames = append(typeLineNames, "Gemini")
 	}
 	if typeLineSelectResult.IsTuner {
 		typeLineNames = append(typeLineNames, "Tuner")

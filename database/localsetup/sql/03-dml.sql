@@ -17,7 +17,7 @@ INSERT INTO monster_types (id, name_ja, name_en) VALUES
 (3, 'トゥーン', 'Toon'),
 (4, 'スピリット', 'Spirit'),
 (5, 'ユニオン', 'Union'),
-(6, 'デュアル', 'Dual'),
+(6, 'デュアル', 'Gemini'),
 (7, 'チューナー', 'Tuner'),
 (8, 'リバース', 'Reverse');
 
