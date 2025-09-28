@@ -30,7 +30,7 @@ func (q *Queries) SelectMonsterTypesById(ctx context.Context, id int32) (SelectM
 	return i, err
 }
 
-const selectMonsterTypesByNameEn = `-- name: SelectMonsterTypesByNameEn :one
+const selectMonsterTypesByNameEn = `-- name: SelectMonsterTypesByNameEn :many
 SELECT id, name_ja, name_en
 FROM monster_types
 WHERE name_en = $1
@@ -43,14 +43,30 @@ type SelectMonsterTypesByNameEnRow struct {
 }
 
 // SelectMonsterTypesByNameEn ...
-func (q *Queries) SelectMonsterTypesByNameEn(ctx context.Context, nameEn sql.NullString) (SelectMonsterTypesByNameEnRow, error) {
-	row := q.db.QueryRowContext(ctx, selectMonsterTypesByNameEn, nameEn)
-	var i SelectMonsterTypesByNameEnRow
-	err := row.Scan(&i.ID, &i.NameJa, &i.NameEn)
-	return i, err
+func (q *Queries) SelectMonsterTypesByNameEn(ctx context.Context, nameEn sql.NullString) ([]SelectMonsterTypesByNameEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, selectMonsterTypesByNameEn, nameEn)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SelectMonsterTypesByNameEnRow
+	for rows.Next() {
+		var i SelectMonsterTypesByNameEnRow
+		if err := rows.Scan(&i.ID, &i.NameJa, &i.NameEn); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
-const selectMonsterTypesByNameJa = `-- name: SelectMonsterTypesByNameJa :one
+const selectMonsterTypesByNameJa = `-- name: SelectMonsterTypesByNameJa :many
 SELECT id, name_ja, name_en
 FROM monster_types
 WHERE name_ja = $1
@@ -63,9 +79,25 @@ type SelectMonsterTypesByNameJaRow struct {
 }
 
 // SelectMonsterTypesByNameJa ...
-func (q *Queries) SelectMonsterTypesByNameJa(ctx context.Context, nameJa sql.NullString) (SelectMonsterTypesByNameJaRow, error) {
-	row := q.db.QueryRowContext(ctx, selectMonsterTypesByNameJa, nameJa)
-	var i SelectMonsterTypesByNameJaRow
-	err := row.Scan(&i.ID, &i.NameJa, &i.NameEn)
-	return i, err
+func (q *Queries) SelectMonsterTypesByNameJa(ctx context.Context, nameJa sql.NullString) ([]SelectMonsterTypesByNameJaRow, error) {
+	rows, err := q.db.QueryContext(ctx, selectMonsterTypesByNameJa, nameJa)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SelectMonsterTypesByNameJaRow
+	for rows.Next() {
+		var i SelectMonsterTypesByNameJaRow
+		if err := rows.Scan(&i.ID, &i.NameJa, &i.NameEn); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
