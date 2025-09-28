@@ -3,7 +3,7 @@ package neon
 import (
 	"context"
 	"fmt"
-	"strings"
+	"slices"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/repository"
@@ -53,7 +53,6 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		for _, typeLine := range cardInfo.TypeLines {
 			typeEntity, err := monsterTypeRepo.GetMonsterTypeByNameEn(ctx, typeLine)
 			if err != nil {
-				//return fmt.Errorf("error get monster type %w", err)
 				continue
 			}
 			// 無効値なのでスキップ
@@ -70,7 +69,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		}
 
 		// モンスターの種類がFusionの場合は、Fusionテーブルへの挿入
-		if strings.Contains(cardInfo.Type, "Fusion") {
+		if slices.Contains(cardInfo.TypeLines, "Fusion") {
 			_, err = fusionMonsterRepo.InsertFusionMonster(ctx, card.ID)
 			if err != nil {
 				return fmt.Errorf("error create fusion monster %w", err)
