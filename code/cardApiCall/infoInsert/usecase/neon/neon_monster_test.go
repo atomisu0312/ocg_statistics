@@ -47,7 +47,7 @@ func testMonsterCommon(t *testing.T, sampleData cardrecord.StandardCard, attrNam
 	typeLinesEn, err := neonUseCase.GetMonsterTypeLinesEnByCardID(context.Background(), cardID)
 	assert.NoError(t, err)
 	assert.NotNil(t, typeLinesEn)
-	assert.Equal(t, typeLines, typeLinesEn)
+	assert.ElementsMatch(t, typeLines, typeLinesEn)
 
 	return resultsGet, nil
 }
@@ -140,13 +140,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "光"
 		RaceNameJa := "炎族"
 		TypeLines := []string{"Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（デュアル）", func(t *testing.T) {
@@ -174,13 +170,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "光"
 		RaceNameJa := "戦士族"
 		TypeLines := []string{"Gemini", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（トゥーン）", func(t *testing.T) {
@@ -208,13 +200,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "闇"
 		RaceNameJa := "機械族"
 		TypeLines := []string{"Toon", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（効果チューナー）", func(t *testing.T) {
@@ -242,13 +230,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "風"
 		RaceNameJa := "幻竜族"
 		TypeLines := []string{"Tuner", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 	t.Run("カード情報の挿入&取得テスト（ユニオン）", func(t *testing.T) {
 		sampleData := cardrecord.StandardCard{
@@ -275,13 +259,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "風"
 		RaceNameJa := "天使族"
 		TypeLines := []string{"Union", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（リバース）", func(t *testing.T) {
@@ -309,13 +289,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "岩石族"
 		TypeLines := []string{"Flip", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（リバースチューナー）", func(t *testing.T) {
@@ -343,13 +319,9 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "闇"
 		RaceNameJa := "魔法使い族"
 		TypeLines := []string{"Flip", "Tuner", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 	t.Run("カード情報の挿入&取得テスト（スピリット）", func(t *testing.T) {
 		sampleData := cardrecord.StandardCard{
@@ -376,15 +348,13 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "アンデット族"
 		TypeLines := []string{"Spirit", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
+}
+func TestNeonMonsterUseCase2(t *testing.T) {
 	t.Run("カード情報の挿入&取得テスト（融合バニラ）", func(t *testing.T) {
 		sampleData := cardrecord.StandardCard{
 			NameEn:         "Karbonala Warrior",

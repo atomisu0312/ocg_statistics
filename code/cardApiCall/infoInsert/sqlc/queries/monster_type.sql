@@ -1,10 +1,10 @@
--- name: SelectMonsterTypesByNameEn :one
+-- name: SelectMonsterTypesByNameEn :many
 -- SelectMonsterTypesByNameEn ...
 SELECT id, name_ja, name_en
 FROM monster_types
 WHERE name_en = $1;
 
--- name: SelectMonsterTypesByNameJa :one
+-- name: SelectMonsterTypesByNameJa :many
 -- SelectMonsterTypesByNameJa ...
 SELECT id, name_ja, name_en
 FROM monster_types

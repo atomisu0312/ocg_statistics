@@ -45,10 +45,16 @@ func (r *monsterTypeRepositoryImpl) GetMonsterTypeByNameJa(ctx context.Context, 
 		return k, err
 	}
 
+	// 0件の場合は、空を返す
+	if len(monsterType) == 0 {
+		return k, nil
+	}
+
+	// 1つ目の要素のみ取得
 	row := kind.SelectFullKindInfoRow{
-		ID:     monsterType.ID,
-		NameJa: monsterType.NameJa,
-		NameEn: monsterType.NameEn,
+		ID:     monsterType[0].ID,
+		NameJa: monsterType[0].NameJa,
+		NameEn: monsterType[0].NameEn,
 	}
 
 	return kind.MonsterKind{Kind: k.FromSelectFullKindInfoRow(row)}, nil
@@ -66,10 +72,16 @@ func (r *monsterTypeRepositoryImpl) GetMonsterTypeByNameEn(ctx context.Context, 
 		return k, err
 	}
 
+	// 0件の場合は、空を返す
+	if len(monsterType) == 0 {
+		return k, nil
+	}
+
+	// 1つ目の要素のみ取得
 	row := kind.SelectFullKindInfoRow{
-		ID:     monsterType.ID,
-		NameJa: monsterType.NameJa,
-		NameEn: monsterType.NameEn,
+		ID:     monsterType[0].ID,
+		NameJa: monsterType[0].NameJa,
+		NameEn: monsterType[0].NameEn,
 	}
 
 	return kind.MonsterKind{Kind: k.FromSelectFullKindInfoRow(row)}, nil
