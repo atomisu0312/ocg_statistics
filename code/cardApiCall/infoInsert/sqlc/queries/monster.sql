@@ -23,15 +23,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -55,7 +55,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id;
 
 
@@ -72,15 +72,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -104,7 +104,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id;
 
 
@@ -121,15 +121,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -153,7 +153,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id;
 
 -- name: InsertFusionMonster :one
@@ -205,15 +205,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -237,7 +237,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id
 join
     fusion_monsters as fm on c.id = fm.card_id;
@@ -255,15 +255,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -287,7 +287,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id
 join
     synchro_monsters as sm on c.id = sm.card_id;
@@ -305,15 +305,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -337,7 +337,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id
 join
     xyz_monsters as xm on c.id = xm.card_id;
@@ -355,15 +355,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -388,7 +388,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id
 join
     link_monsters as lm on c.id = lm.card_id;
@@ -406,15 +406,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -441,7 +441,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id
 join
     pendulum_monsters as pm on c.id = pm.card_id;
@@ -459,15 +459,15 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
@@ -491,7 +491,7 @@ join
     races as r on m.race_id = r.id
 join
     attributes as a on m.attribute_id = a.id
-join
+left join
     card_types as ct on c.id = ct.card_id
 join
     ritual_monsters as rm on c.id = rm.card_id;
@@ -511,18 +511,19 @@ with target_card as (
 card_types as (
     select
         tt.id as card_id,
-        array_agg(mt.name_ja)::varchar[] as type_names_ja,
-        array_agg(mt.name_en)::varchar[] as type_names_en
+        COALESCE(array_agg(mt.name_ja) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_ja,
+        COALESCE(array_agg(mt.name_en) FILTER (WHERE t.type_id IS NOT NULL), '{}')::varchar[] as type_names_en
     from
         target_card as tt
     join
     monsters as m on m.card_id = tt.id
-    cross join lateral
-        unnest(m.type_ids) as t(type_id)
-    join
+    left join lateral
+        unnest(m.type_ids) as t(type_id) on true
+    left join
         monster_types as mt on t.type_id = mt.id
     group by
         tt.id
+        
 )
 select
     tc.id,

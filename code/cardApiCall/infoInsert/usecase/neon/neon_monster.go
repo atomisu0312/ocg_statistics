@@ -3,6 +3,7 @@ package neon
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/repository"
@@ -25,6 +26,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		attributeRepo := repository.NewAttributeRepository(q)
 		raceRepo := repository.NewRaceRepository(q)
 		monsterTypeRepo := repository.NewMonsterTypeRepository(q)
+		fusionMonsterRepo := repository.NewFusionMonsterRepository(q)
 
 		// カードの挿入
 		card, err := cardRepo.InsertCard(ctx, cardInfo.ToInsertCardParamsExceptMonster())
@@ -54,6 +56,10 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 				//return fmt.Errorf("error get monster type %w", err)
 				continue
 			}
+			// 無効値なのでスキップ
+			if typeEntity.ID == 0 {
+				continue
+			}
 			typeIDs = append(typeIDs, typeEntity.ID)
 		}
 
@@ -61,6 +67,14 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		_, err = monsterRepo.InsertMonster(ctx, card.ID, raceID, attributeID, cardInfo.Atk, cardInfo.Def, cardInfo.Level, typeIDs)
 		if err != nil {
 			return fmt.Errorf("error create monster %w", err)
+		}
+
+		// モンスターの種類がFusionの場合は、Fusionテーブルへの挿入
+		if strings.Contains(cardInfo.Type, "Fusion") {
+			_, err = fusionMonsterRepo.InsertFusionMonster(ctx, card.ID)
+			if err != nil {
+				return fmt.Errorf("error create fusion monster %w", err)
+			}
 		}
 
 		result = card.ID
