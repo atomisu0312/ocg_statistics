@@ -30,7 +30,7 @@ type MonsterTypeLineSelectResult struct {
 	IsUnion    bool  `db:"is_union" json:"isUnion"`
 	IsGemini   bool  `db:"is_gemini" json:"isGemini"`
 	IsTuner    bool  `db:"is_tuner" json:"isTuner"`
-	IsReverse  bool  `db:"is_reverse" json:"isReverse"`
+	IsFlip     bool  `db:"is_flip" json:"isFlip"`
 	IsRitual   bool  `db:"is_ritual" json:"isRitual"`
 	IsXyz      bool  `db:"is_xyz" json:"isXyz"`
 	IsSynchro  bool  `db:"is_synchro" json:"isSynchro"`
@@ -130,7 +130,7 @@ type SelectMonsterTypeLineByCardIDRow struct {
 	IsUnion    bool  `db:"is_union" json:"isUnion"`
 	IsGemini   bool  `db:"is_gemini" json:"isGemini"`
 	IsTuner    bool  `db:"is_tuner" json:"isTuner"`
-	IsReverse  bool  `db:"is_reverse" json:"isReverse"`
+	IsFlip     bool  `db:"is_flip" json:"isFlip"`
 	IsRitual   bool  `db:"is_ritual" json:"isRitual"`
 	IsXyz      bool  `db:"is_xyz" json:"isXyz"`
 	IsSynchro  bool  `db:"is_synchro" json:"isSynchro"`
@@ -151,7 +151,7 @@ func (m *MonsterTypeLineSelectResult) FromSelectMonsterTypeLineByCardIDRow(row S
 		IsUnion:    row.IsUnion,
 		IsGemini:   row.IsGemini,
 		IsTuner:    row.IsTuner,
-		IsReverse:  row.IsReverse,
+		IsFlip:     row.IsFlip,
 		IsRitual:   row.IsRitual,
 		IsXyz:      row.IsXyz,
 		IsSynchro:  row.IsSynchro,

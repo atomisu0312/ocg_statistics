@@ -535,7 +535,7 @@ select
     'Union' = ANY(ct.type_names_en)::boolean as is_union,
     'Gemini' = ANY(ct.type_names_en)::boolean as is_gemini,
     'Tuner' = ANY(ct.type_names_en)::boolean as is_tuner,
-    'Reverse' = ANY(ct.type_names_en)::boolean as is_reverse,
+    'Flip' = ANY(ct.type_names_en)::boolean as is_flip,
     rm.card_id is not null::boolean as is_ritual,
     xm.card_id is not null::boolean as is_xyz,
     sm.card_id is not null::boolean as is_synchro,
