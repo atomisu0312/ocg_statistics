@@ -1216,7 +1216,7 @@ select
     'Union' = ANY(ct.type_names_en)::boolean as is_union,
     'Gemini' = ANY(ct.type_names_en)::boolean as is_gemini,
     'Tuner' = ANY(ct.type_names_en)::boolean as is_tuner,
-    'Reverse' = ANY(ct.type_names_en)::boolean as is_reverse,
+    'Flip' = ANY(ct.type_names_en)::boolean as is_flip,
     rm.card_id is not null::boolean as is_ritual,
     xm.card_id is not null::boolean as is_xyz,
     sm.card_id is not null::boolean as is_synchro,
@@ -1245,7 +1245,7 @@ type SelectMonsterTypeLineByCardIDRow struct {
 	IsUnion    bool          `db:"is_union" json:"isUnion"`
 	IsGemini   bool          `db:"is_gemini" json:"isGemini"`
 	IsTuner    bool          `db:"is_tuner" json:"isTuner"`
-	IsReverse  bool          `db:"is_reverse" json:"isReverse"`
+	IsFlip     bool          `db:"is_flip" json:"isFlip"`
 	IsRitual   bool          `db:"is_ritual" json:"isRitual"`
 	IsXyz      bool          `db:"is_xyz" json:"isXyz"`
 	IsSynchro  bool          `db:"is_synchro" json:"isSynchro"`
@@ -1269,7 +1269,7 @@ func (q *Queries) SelectMonsterTypeLineByCardID(ctx context.Context, id int64) (
 		&i.IsUnion,
 		&i.IsGemini,
 		&i.IsTuner,
-		&i.IsReverse,
+		&i.IsFlip,
 		&i.IsRitual,
 		&i.IsXyz,
 		&i.IsSynchro,
