@@ -27,6 +27,9 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		raceRepo := repository.NewRaceRepository(q)
 		monsterTypeRepo := repository.NewMonsterTypeRepository(q)
 		fusionMonsterRepo := repository.NewFusionMonsterRepository(q)
+		synchroMonsterRepo := repository.NewSynchroMonsterRepository(q)
+		xyzMonsterRepo := repository.NewXyzMonsterRepository(q)
+		ritualMonsterRepo := repository.NewRitualMonsterRepository(q)
 
 		// カードの挿入
 		card, err := cardRepo.InsertCard(ctx, cardInfo.ToInsertCardParamsExceptMonster())
@@ -71,6 +74,30 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		// モンスターの種類がFusionの場合は、Fusionテーブルへの挿入
 		if slices.Contains(cardInfo.TypeLines, "Fusion") {
 			_, err = fusionMonsterRepo.InsertFusionMonster(ctx, card.ID)
+			if err != nil {
+				return fmt.Errorf("error create fusion monster %w", err)
+			}
+		}
+
+		// モンスターの種類がFusionの場合は、Fusionテーブルへの挿入
+		if slices.Contains(cardInfo.TypeLines, "Synchro") {
+			_, err = synchroMonsterRepo.InsertSynchroMonster(ctx, card.ID)
+			if err != nil {
+				return fmt.Errorf("error create fusion monster %w", err)
+			}
+		}
+
+		// モンスターの種類がXyzの場合は、Xyzテーブルへの挿入
+		if slices.Contains(cardInfo.TypeLines, "Xyz") {
+			_, err = xyzMonsterRepo.InsertXyzMonster(ctx, card.ID)
+			if err != nil {
+				return fmt.Errorf("error create fusion monster %w", err)
+			}
+		}
+
+		// モンスターの種類がRitualの場合は、Ritualテーブルへの挿入
+		if slices.Contains(cardInfo.TypeLines, "Ritual") {
+			_, err = ritualMonsterRepo.InsertRitualMonster(ctx, card.ID)
 			if err != nil {
 				return fmt.Errorf("error create fusion monster %w", err)
 			}
