@@ -30,6 +30,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		synchroMonsterRepo := repository.NewSynchroMonsterRepository(q)
 		xyzMonsterRepo := repository.NewXyzMonsterRepository(q)
 		ritualMonsterRepo := repository.NewRitualMonsterRepository(q)
+		pendulumMonsterRepo := repository.NewPendulumMonsterRepository(q)
 
 		// カードの挿入
 		card, err := cardRepo.InsertCard(ctx, cardInfo.ToInsertCardParamsExceptMonster())
@@ -79,7 +80,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 			}
 		}
 
-		// モンスターの種類がFusionの場合は、Fusionテーブルへの挿入
+		// モンスターの種類がSynchroの場合は、Synchroテーブルへの挿入
 		if slices.Contains(cardInfo.TypeLines, "Synchro") {
 			_, err = synchroMonsterRepo.InsertSynchroMonster(ctx, card.ID)
 			if err != nil {
@@ -100,6 +101,14 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 			_, err = ritualMonsterRepo.InsertRitualMonster(ctx, card.ID)
 			if err != nil {
 				return fmt.Errorf("error create ritual monster %w", err)
+			}
+		}
+
+		// モンスターの種類がPendulumの場合は、Pendulumテーブルへの挿入
+		if slices.Contains(cardInfo.TypeLines, "Pendulum") {
+			_, err = pendulumMonsterRepo.InsertPendulumMonster(ctx, card.ID, cardInfo.PendulumScale, cardInfo.PendulumTextJa, cardInfo.PendulumTextEn)
+			if err != nil {
+				return fmt.Errorf("error create pendulum monster %w", err)
 			}
 		}
 

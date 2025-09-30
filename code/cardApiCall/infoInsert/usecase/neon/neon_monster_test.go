@@ -653,13 +653,10 @@ func TestNeonMonsterUseCase3(t *testing.T) {
 		AttributeNameJa := "風"
 		RaceNameJa := "鳥獣族"
 		TypeLines := []string{"Normal", "Pendulum"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（ペンデュラム）", func(t *testing.T) {
@@ -687,13 +684,10 @@ func TestNeonMonsterUseCase3(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "ドラゴン族"
 		TypeLines := []string{"Pendulum", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 	t.Run("カード情報の挿入&取得テスト（融合ペンデュラム）", func(t *testing.T) {
 		sampleData := cardrecord.StandardCard{
@@ -720,13 +714,10 @@ func TestNeonMonsterUseCase3(t *testing.T) {
 		AttributeNameJa := "闇"
 		RaceNameJa := "ドラゴン族"
 		TypeLines := []string{"Fusion", "Pendulum", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（Xyzペンデュラム）", func(t *testing.T) {
@@ -754,13 +745,10 @@ func TestNeonMonsterUseCase3(t *testing.T) {
 		AttributeNameJa := "闇"
 		RaceNameJa := "悪魔族"
 		TypeLines := []string{"Xyz", "Pendulum", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 }
 
