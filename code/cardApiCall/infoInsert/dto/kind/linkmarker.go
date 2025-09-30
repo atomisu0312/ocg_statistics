@@ -1,48 +1,29 @@
 package kind
 
-import "slices"
+import "strings"
 
-type LinkMarker struct {
-	MarkerVal   int
-	DirectionEn string
+var linkMarkerMap = map[string]int32{
+	"top":          1,
+	"top-right":    2,
+	"right":        4,
+	"bottom-right": 8,
+	"bottom":       16,
+	"bottom-left":  32,
+	"left":         64,
+	"top-left":     128, // 標準表記は Top-Left にする（既存データとの整合は要確認）
 }
 
-var (
-	Top         = LinkMarker{MarkerVal: 1, DirectionEn: "Top"}
-	TopRight    = LinkMarker{MarkerVal: 2, DirectionEn: "Top-Right"}
-	Right       = LinkMarker{MarkerVal: 4, DirectionEn: "Right"}
-	BottomRight = LinkMarker{MarkerVal: 8, DirectionEn: "Bottom-Right"}
-	Bottom      = LinkMarker{MarkerVal: 16, DirectionEn: "Bottom"}
-	BottomLeft  = LinkMarker{MarkerVal: 32, DirectionEn: "Bottom-Left"}
-	Left        = LinkMarker{MarkerVal: 64, DirectionEn: "Left"}
-	LeftTop     = LinkMarker{MarkerVal: 128, DirectionEn: "Left-Top"}
-)
-
-func ConvertLinkMarkerStringToLinkMarker(linkMarkerStringList []string) int {
-	result := 0
-	if slices.Contains(linkMarkerStringList, Top.DirectionEn) {
-		result += Top.MarkerVal
+// ConvertLinkMarkerStringToLinkMarker は方向文字列リストをマスク(int32)に変換する。
+// 受け取る文字列は小文字化してハイフン区切りで正規化する（例: "Top-Right" -> "top-right"）。
+func ConvertLinkMarkerStringToLinkMarkerValInt(linkMarkerStringList []string) int32 {
+	var mask int32
+	for _, s := range linkMarkerStringList {
+		key := strings.ToLower(strings.TrimSpace(s))
+		// 正規化: "top-right" / "top right" / "Top-Right" 等を許容したければここで置換する
+		key = strings.ReplaceAll(key, " ", "-")
+		if v, ok := linkMarkerMap[key]; ok {
+			mask |= v
+		}
 	}
-	if slices.Contains(linkMarkerStringList, TopRight.DirectionEn) {
-		result += TopRight.MarkerVal
-	}
-	if slices.Contains(linkMarkerStringList, Right.DirectionEn) {
-		result += Right.MarkerVal
-	}
-	if slices.Contains(linkMarkerStringList, BottomRight.DirectionEn) {
-		result += BottomRight.MarkerVal
-	}
-	if slices.Contains(linkMarkerStringList, Bottom.DirectionEn) {
-		result += Bottom.MarkerVal
-	}
-	if slices.Contains(linkMarkerStringList, BottomLeft.DirectionEn) {
-		result += BottomLeft.MarkerVal
-	}
-	if slices.Contains(linkMarkerStringList, Left.DirectionEn) {
-		result += Left.MarkerVal
-	}
-	if slices.Contains(linkMarkerStringList, LeftTop.DirectionEn) {
-		result += LeftTop.MarkerVal
-	}
-	return result
+	return mask
 }
