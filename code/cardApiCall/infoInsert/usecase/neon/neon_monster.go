@@ -6,6 +6,7 @@ import (
 	"slices"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
+	"atomisu.com/ocg-statics/infoInsert/dto/kind"
 	"atomisu.com/ocg-statics/infoInsert/repository"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
 	"atomisu.com/ocg-statics/infoInsert/transaction"
@@ -31,6 +32,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		xyzMonsterRepo := repository.NewXyzMonsterRepository(q)
 		ritualMonsterRepo := repository.NewRitualMonsterRepository(q)
 		pendulumMonsterRepo := repository.NewPendulumMonsterRepository(q)
+		linkMonsterRepo := repository.NewLinkMonsterRepository(q)
 
 		// カードの挿入
 		card, err := cardRepo.InsertCard(ctx, cardInfo.ToInsertCardParamsExceptMonster())
@@ -66,8 +68,12 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 			typeIDs = append(typeIDs, typeEntity.ID)
 		}
 
-		// モンスターの挿入
-		_, err = monsterRepo.InsertMonster(ctx, card.ID, raceID, attributeID, cardInfo.Atk, cardInfo.Def, cardInfo.Level, typeIDs)
+		// モンスターの挿入 (レベルとしてはリンク or レベルのうち大きいものを採用する)
+		_, err = monsterRepo.InsertMonster(ctx,
+			card.ID, raceID, attributeID, cardInfo.Atk, cardInfo.Def,
+			slices.Max([]int32{cardInfo.Level, cardInfo.LinkVal}), typeIDs,
+		)
+
 		if err != nil {
 			return fmt.Errorf("error create monster %w", err)
 		}
@@ -112,6 +118,15 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 			}
 		}
 
+		// モンスターの種類がLinkの場合は、Linkテーブルへの挿入
+		if slices.Contains(cardInfo.TypeLines, "Link") {
+			// Linkマーカーに変換する処理が必要な気がする
+			_, err = linkMonsterRepo.InsertLinkMonster(ctx, card.ID, kind.ConvertLinkMarkerStringToLinkMarkerValInt(cardInfo.LinkMarkers))
+			if err != nil {
+				return fmt.Errorf("error create link monster %w", err)
+			}
+		}
+
 		result = card.ID
 		return nil
 	})
@@ -125,8 +140,56 @@ func (n *neonUseCaseImpl) GetMonsterCardByID(ctx context.Context, cardID int64) 
 	return monsterRepo.GetMonsterByCardID(ctx, cardID)
 }
 
+// GetMonsterCardExtendedByID は、拡張属性(リンクマーカーの向きやペンデュラムスケールなど)付きでモンスターのカードを取得。
+func (n *neonUseCaseImpl) GetMonsterCardExtendedByID(ctx context.Context, cardID int64) (cardrecord.MonsterCardSelectResultExtended, error) {
+	q := sqlc_gen.New(n.ProduceConnDB())
+	monsterRepo := repository.NewMonsterRepository(q)
+	monster, err := monsterRepo.GetMonsterByCardID(ctx, cardID)
+	if err != nil {
+		return cardrecord.MonsterCardSelectResultExtended{}, err
+	}
+
+	monsterWithTypeLines, err := monsterRepo.GetMonsterTypeLineByCardID(ctx, cardID)
+	if err != nil {
+		return cardrecord.MonsterCardSelectResultExtended{}, err
+	}
+
+	if monsterWithTypeLines.IsLink {
+		linkMonsterRepo := repository.NewLinkMonsterRepository(q)
+		linkMonster, err := linkMonsterRepo.GetLinkMonsterByCardID(ctx, cardID)
+		if err != nil {
+			return cardrecord.MonsterCardSelectResultExtended{}, err
+		}
+
+		return cardrecord.MonsterCardSelectResultExtended{
+			MonsterCardSelectResult: monster,
+			LinkMarker:              linkMonster.LinkMarker.Int32,
+		}, nil
+	}
+
+	if monsterWithTypeLines.IsPendulum {
+		pendulumMonsterRepo := repository.NewPendulumMonsterRepository(q)
+		pendulumMonster, err := pendulumMonsterRepo.GetPendulumMonsterByCardID(ctx, cardID)
+		if err != nil {
+			return cardrecord.MonsterCardSelectResultExtended{}, err
+		}
+
+		return cardrecord.MonsterCardSelectResultExtended{
+			MonsterCardSelectResult: monster,
+			Scale:                   pendulumMonster.Scale.Int32,
+			PendulumTextJa:          pendulumMonster.PendulumTextJa.String,
+			PendulumTextEn:          pendulumMonster.PendulumTextEn.String,
+		}, nil
+	}
+
+	return cardrecord.MonsterCardSelectResultExtended{
+		MonsterCardSelectResult: monster,
+	}, nil
+}
+
 // GetMonsterTypeLinesEnByCardID は、モンスターの種類を取得。
 func (n *neonUseCaseImpl) GetMonsterTypeLinesEnByCardID(ctx context.Context, cardID int64) ([]string, error) {
+
 	monsterRepo := repository.NewMonsterRepository(sqlc_gen.New(n.ProduceConnDB()))
 	typeLineNames := []string{}
 	typeLineSelectResult, err := monsterRepo.GetMonsterTypeLineByCardID(ctx, cardID)

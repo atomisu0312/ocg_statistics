@@ -3,6 +3,7 @@ package neon_test
 import (
 	"context"
 	"fmt"
+	"slices"
 	"testing"
 
 	"atomisu.com/ocg-statics/infoInsert/app"
@@ -13,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func testMonsterCommon(t *testing.T, sampleData cardrecord.StandardCard, attrNameJa string, raceNameJa string, typeLines []string) (cardrecord.MonsterCardSelectResult, error) {
+func testMonsterCommon(t *testing.T, sampleData cardrecord.StandardCard, attrNameJa string, raceNameJa string, typeLines []string, linkValInt int32) (cardrecord.MonsterCardSelectResult, error) {
 	config.BeforeEachForUnitTest()      // テスト前処理
 	defer config.AfterEachForUnitTest() // テスト後処理
 
@@ -29,7 +30,9 @@ func testMonsterCommon(t *testing.T, sampleData cardrecord.StandardCard, attrNam
 	assert.NotEqual(t, int32(-1), resultInsert)
 	cardID := resultInsert
 
-	resultsGet, err := neonUseCase.GetMonsterCardByID(context.Background(), cardID)
+	resultsFull, err := neonUseCase.GetMonsterCardExtendedByID(context.Background(), cardID)
+	resultsGet := resultsFull.MonsterCardSelectResult
+
 	assert.NoError(t, err)
 	assert.NotNil(t, resultsGet)
 	assert.Equal(t, sampleData.NameEn, resultsGet.NameEn)
@@ -42,7 +45,12 @@ func testMonsterCommon(t *testing.T, sampleData cardrecord.StandardCard, attrNam
 	assert.Equal(t, attrNameJa, resultsGet.AttributeNameJa)
 	assert.Equal(t, sampleData.Def, resultsGet.Defense)
 	assert.Equal(t, sampleData.Atk, resultsGet.Attack)
-	assert.Equal(t, sampleData.Level, resultsGet.Level)
+	assert.Equal(t, slices.Max([]int32{sampleData.Level, sampleData.LinkVal}), resultsGet.Level)
+
+	assert.Equal(t, linkValInt, resultsFull.LinkMarker)
+	assert.Equal(t, sampleData.PendulumScale, resultsFull.Scale)
+	assert.Equal(t, sampleData.PendulumTextJa, resultsFull.PendulumTextJa)
+	assert.Equal(t, sampleData.PendulumTextEn, resultsFull.PendulumTextEn)
 
 	typeLinesEn, err := neonUseCase.GetMonsterTypeLinesEnByCardID(context.Background(), cardID)
 	assert.NoError(t, err)
@@ -79,7 +87,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		RaceNameJa := "天使族"
 		TypeLines := []string{"Normal"}
 
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 
@@ -110,7 +118,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "獣族"
 		TypeLines := []string{"Normal"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -140,7 +148,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "光"
 		RaceNameJa := "炎族"
 		TypeLines := []string{"Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -170,7 +178,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "光"
 		RaceNameJa := "戦士族"
 		TypeLines := []string{"Gemini", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -200,7 +208,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "闇"
 		RaceNameJa := "機械族"
 		TypeLines := []string{"Toon", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -230,7 +238,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "風"
 		RaceNameJa := "幻竜族"
 		TypeLines := []string{"Tuner", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -259,7 +267,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "風"
 		RaceNameJa := "天使族"
 		TypeLines := []string{"Union", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -289,7 +297,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "岩石族"
 		TypeLines := []string{"Flip", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -319,7 +327,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "闇"
 		RaceNameJa := "魔法使い族"
 		TypeLines := []string{"Flip", "Tuner", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -348,7 +356,7 @@ func TestNeonMonsterUseCase(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "アンデット族"
 		TypeLines := []string{"Spirit", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -382,7 +390,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "戦士族"
 		TypeLines := []string{"Fusion"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -411,7 +419,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		AttributeNameJa := "闇"
 		RaceNameJa := "幻想魔族"
 		TypeLines := []string{"Fusion", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -440,7 +448,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		AttributeNameJa := "水"
 		RaceNameJa := "水族"
 		TypeLines := []string{"Ritual"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -470,7 +478,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		AttributeNameJa := "水"
 		RaceNameJa := "サイバース族"
 		TypeLines := []string{"Ritual", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -500,7 +508,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "岩石族"
 		TypeLines := []string{"Xyz"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -529,7 +537,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		AttributeNameJa := "闇"
 		RaceNameJa := "雷族"
 		TypeLines := []string{"Xyz", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -558,7 +566,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "悪魔族"
 		TypeLines := []string{"Synchro"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -587,7 +595,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		AttributeNameJa := "風"
 		RaceNameJa := "海竜族"
 		TypeLines := []string{"Synchro", "Effect"}
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -620,7 +628,7 @@ func TestNeonMonsterUseCase2(t *testing.T) {
 		fmt.Println(AttributeNameJa)
 		fmt.Println(RaceNameJa)
 		fmt.Println(TypeLines)
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -654,7 +662,7 @@ func TestNeonMonsterUseCase3(t *testing.T) {
 		RaceNameJa := "鳥獣族"
 		TypeLines := []string{"Normal", "Pendulum"}
 
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -685,7 +693,7 @@ func TestNeonMonsterUseCase3(t *testing.T) {
 		RaceNameJa := "ドラゴン族"
 		TypeLines := []string{"Pendulum", "Effect"}
 
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -715,7 +723,7 @@ func TestNeonMonsterUseCase3(t *testing.T) {
 		RaceNameJa := "ドラゴン族"
 		TypeLines := []string{"Fusion", "Pendulum", "Effect"}
 
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -746,7 +754,7 @@ func TestNeonMonsterUseCase3(t *testing.T) {
 		RaceNameJa := "悪魔族"
 		TypeLines := []string{"Xyz", "Pendulum", "Effect"}
 
-		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, 0)
 		assert.NoError(t, err)
 		assert.NotNil(t, results)
 	})
@@ -779,13 +787,11 @@ func TestNeonMonsterUseCase4(t *testing.T) {
 		AttributeNameJa := "光"
 		RaceNameJa := "サイバース族"
 		TypeLines := []string{"Link"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		LinkValInt := int32(40)
+
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, LinkValInt)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 
 	t.Run("カード情報の挿入&取得テスト（リンク）", func(t *testing.T) {
@@ -813,12 +819,10 @@ func TestNeonMonsterUseCase4(t *testing.T) {
 		AttributeNameJa := "地"
 		RaceNameJa := "昆虫族"
 		TypeLines := []string{"Link", "Effect"}
-		fmt.Println(sampleData)
-		fmt.Println(AttributeNameJa)
-		fmt.Println(RaceNameJa)
-		fmt.Println(TypeLines)
-		//results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines)
-		//assert.NoError(t, err)
-		//assert.NotNil(t, results)
+		LinkValInt := int32(84)
+
+		results, err := testMonsterCommon(t, sampleData, AttributeNameJa, RaceNameJa, TypeLines, LinkValInt)
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
 	})
 }

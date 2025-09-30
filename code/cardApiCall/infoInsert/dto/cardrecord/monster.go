@@ -19,6 +19,14 @@ type MonsterCardSelectResult struct {
 	AttributeNameEn string   `db:"attribute_name_en" json:"attributeNameEn"`
 }
 
+type MonsterCardSelectResultExtended struct {
+	MonsterCardSelectResult
+	LinkMarker     int32  `db:"link_marker" json:"linkMarker"`
+	Scale          int32  `db:"scale" json:"scale"`
+	PendulumTextJa string `db:"pendulum_text_ja" json:"pendulumTextJa"`
+	PendulumTextEn string `db:"pendulum_text_en" json:"pendulumTextEn"`
+}
+
 type MonsterTypeLineSelectResult struct {
 	ID         int64 `db:"id" json:"id"`
 	OcgApiID   int64 `db:"ocg_api_id" json:"ocgApiID"`

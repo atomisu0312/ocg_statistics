@@ -22,6 +22,7 @@ type NeonUseCase interface {
 	GetSpellCardByID(ctx context.Context, cardID int64) (cardrecord.SpellCardSelectResult, error)
 	InsertMonsterCardInfo(ctx context.Context, cardInfo cardrecord.StandardCard) (int64, error)
 	GetMonsterCardByID(ctx context.Context, cardID int64) (cardrecord.MonsterCardSelectResult, error)
+	GetMonsterCardExtendedByID(ctx context.Context, cardID int64) (cardrecord.MonsterCardSelectResultExtended, error)
 	GetMonsterTypeLinesEnByCardID(ctx context.Context, cardID int64) ([]string, error)
 }
 
