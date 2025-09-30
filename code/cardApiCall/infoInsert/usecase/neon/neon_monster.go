@@ -142,7 +142,8 @@ func (n *neonUseCaseImpl) GetMonsterCardByID(ctx context.Context, cardID int64) 
 
 // GetMonsterCardExtendedByID は、拡張属性(リンクマーカーの向きやペンデュラムスケールなど)付きでモンスターのカードを取得。
 func (n *neonUseCaseImpl) GetMonsterCardExtendedByID(ctx context.Context, cardID int64) (cardrecord.MonsterCardSelectResultExtended, error) {
-	monsterRepo := repository.NewMonsterRepository(sqlc_gen.New(n.ProduceConnDB()))
+	q := sqlc_gen.New(n.ProduceConnDB())
+	monsterRepo := repository.NewMonsterRepository(q)
 	monster, err := monsterRepo.GetMonsterByCardID(ctx, cardID)
 	if err != nil {
 		return cardrecord.MonsterCardSelectResultExtended{}, err
@@ -154,7 +155,7 @@ func (n *neonUseCaseImpl) GetMonsterCardExtendedByID(ctx context.Context, cardID
 	}
 
 	if monsterWithTypeLines.IsLink {
-		linkMonsterRepo := repository.NewLinkMonsterRepository(sqlc_gen.New(n.ProduceConnDB()))
+		linkMonsterRepo := repository.NewLinkMonsterRepository(q)
 		linkMonster, err := linkMonsterRepo.GetLinkMonsterByCardID(ctx, cardID)
 		if err != nil {
 			return cardrecord.MonsterCardSelectResultExtended{}, err
@@ -167,7 +168,7 @@ func (n *neonUseCaseImpl) GetMonsterCardExtendedByID(ctx context.Context, cardID
 	}
 
 	if monsterWithTypeLines.IsPendulum {
-		pendulumMonsterRepo := repository.NewPendulumMonsterRepository(sqlc_gen.New(n.ProduceConnDB()))
+		pendulumMonsterRepo := repository.NewPendulumMonsterRepository(q)
 		pendulumMonster, err := pendulumMonsterRepo.GetPendulumMonsterByCardID(ctx, cardID)
 		if err != nil {
 			return cardrecord.MonsterCardSelectResultExtended{}, err
@@ -188,6 +189,7 @@ func (n *neonUseCaseImpl) GetMonsterCardExtendedByID(ctx context.Context, cardID
 
 // GetMonsterTypeLinesEnByCardID は、モンスターの種類を取得。
 func (n *neonUseCaseImpl) GetMonsterTypeLinesEnByCardID(ctx context.Context, cardID int64) ([]string, error) {
+
 	monsterRepo := repository.NewMonsterRepository(sqlc_gen.New(n.ProduceConnDB()))
 	typeLineNames := []string{}
 	typeLineSelectResult, err := monsterRepo.GetMonsterTypeLineByCardID(ctx, cardID)
