@@ -121,7 +121,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		// モンスターの種類がLinkの場合は、Linkテーブルへの挿入
 		if slices.Contains(cardInfo.TypeLines, "Link") {
 			// Linkマーカーに変換する処理が必要な気がする
-			_, err = linkMonsterRepo.InsertLinkMonster(ctx, card.ID, int32(kind.ConvertLinkMarkerStringToLinkMarkerValInt(cardInfo.LinkMarkers)))
+			_, err = linkMonsterRepo.InsertLinkMonster(ctx, card.ID, kind.ConvertLinkMarkerStringToLinkMarkerValInt(cardInfo.LinkMarkers))
 			if err != nil {
 				return fmt.Errorf("error create link monster %w", err)
 			}
