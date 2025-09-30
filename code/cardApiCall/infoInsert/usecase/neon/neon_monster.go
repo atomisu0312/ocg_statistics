@@ -83,7 +83,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		if slices.Contains(cardInfo.TypeLines, "Synchro") {
 			_, err = synchroMonsterRepo.InsertSynchroMonster(ctx, card.ID)
 			if err != nil {
-				return fmt.Errorf("error create fusion monster %w", err)
+				return fmt.Errorf("error create synchro monster %w", err)
 			}
 		}
 
@@ -91,7 +91,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		if slices.Contains(cardInfo.TypeLines, "Xyz") {
 			_, err = xyzMonsterRepo.InsertXyzMonster(ctx, card.ID)
 			if err != nil {
-				return fmt.Errorf("error create fusion monster %w", err)
+				return fmt.Errorf("error create xyz monster %w", err)
 			}
 		}
 
@@ -99,7 +99,7 @@ func (n *neonUseCaseImpl) InsertMonsterCardInfo(ctx context.Context, cardInfo ca
 		if slices.Contains(cardInfo.TypeLines, "Ritual") {
 			_, err = ritualMonsterRepo.InsertRitualMonster(ctx, card.ID)
 			if err != nil {
-				return fmt.Errorf("error create fusion monster %w", err)
+				return fmt.Errorf("error create ritual monster %w", err)
 			}
 		}
 
