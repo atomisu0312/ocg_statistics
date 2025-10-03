@@ -1,4 +1,6 @@
 
+BEGIN;
+
 truncate table cards restart identity cascade;
 
 -- 既存のカードデータ
@@ -17,7 +19,7 @@ values
 (19, 9, 'エクス・ライゼオル', 'Ext Ryzeal', 'テキスト１', 'text1'),
 (20, 10, 'E・HERO アナザー・ネオス', 'Elemental HERO Neos Alius', 'テキスト１', 'text1'),
 (21, 11, 'トゥーン・キャノン・ソルジャー', 'Toon Cannon Soldier', 'テキスト１', 'text1'),
-(22, 12, 'イルミラージュ', 'Al-Lumi''''raj', 'テキスト１', 'text1'),
+(22, 12, 'イルミラージュ', 'Al-Lumiraj', 'テキスト１', 'text1'),
 (23, 13, '運命の戦車', 'Fortune Chariot', 'テキスト１', 'text1'),
 (24, 14, 'カオスポッド', 'Morphing Jar #2', 'テキスト１', 'text1'),
 (25, 15, '砂塵の悪霊', 'Dark Dust Spirit', 'テキスト１', 'text1'),
@@ -98,3 +100,5 @@ insert into pendulum_monsters(card_id, scale, pendulum_text_ja, pendulum_text_en
 insert into link_monsters(card_id, link_marker) values
 (30, 40),
 (31, 84);
+
+COMMIT;
