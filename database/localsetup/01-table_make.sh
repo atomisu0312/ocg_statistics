@@ -12,3 +12,4 @@ psql -U postgres -d test_ocg_statics -f /docker-entrypoint-initdb.d/sql/03-dml.s
 # SQLファイルの実行
 psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/sql/02-init.sql
 psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/sql/03-dml.sql
+psql -U postgres -d postgres -f /docker-entrypoint-initdb.d/sql/04-sample_card_dml.sql
