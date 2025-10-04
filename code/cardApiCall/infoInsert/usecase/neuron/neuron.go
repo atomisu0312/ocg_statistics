@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/htmlget"
 	"atomisu.com/ocg-statics/infoInsert/usecase"
 	"atomisu.com/ocg-statics/infoInsert/util"
@@ -18,7 +19,7 @@ type neuronUseCaseImpl struct {
 // NeuronUseCase は、NeuronUseCaseのインターフェースです。
 type NeuronUseCase interface {
 	usecase.UseCase
-	GetCardInfo(ctx context.Context, cardID int64) (NeuronExtractedData, error)
+	GetCardInfo(ctx context.Context, cardID int64) (cardrecord.NeuronExtractedData, error)
 }
 
 // NewNeuronUseCase は、NeuronUseCaseのコンストラクタです。
@@ -28,22 +29,13 @@ func NewNeuronUseCase(i *do.Injector) (NeuronUseCase, error) {
 	})
 }
 
-// NeuronExtractedData は、NeuronUseCaseの抽出データです。
-type NeuronExtractedData struct {
-	CardID         int64
-	CardNameEn     string
-	CardNameJa     string
-	CardTextJa     string
-	PendulumTextJa string
-}
-
 // GetCardInfo により、NeuronUseCaseを使ってカードの情報を取得する
-func (n *neuronUseCaseImpl) GetCardInfo(ctx context.Context, cardID int64) (NeuronExtractedData, error) {
+func (n *neuronUseCaseImpl) GetCardInfo(ctx context.Context, cardID int64) (cardrecord.NeuronExtractedData, error) {
 	htmlGetter := htmlget.NewNeuronHtmlGetter()
 	results, err := htmlGetter.VisitSite(ctx, fmt.Sprintf(htmlget.BASE_URL_FORMAT, cardID))
 
 	if err != nil {
-		return NeuronExtractedData{}, err
+		return cardrecord.NeuronExtractedData{}, err
 	}
 
 	// テキストを適切に処理
@@ -67,7 +59,7 @@ func (n *neuronUseCaseImpl) GetCardInfo(ctx context.Context, cardID int64) (Neur
 		cardTextJa = cardTextJa2Parts[1]
 	}
 
-	return NeuronExtractedData{
+	return cardrecord.NeuronExtractedData{
 		CardID:         cardID,
 		CardNameEn:     results[htmlget.CardNameEn],
 		CardNameJa:     cardNameJa,

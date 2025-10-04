@@ -2,6 +2,7 @@ package app
 
 import (
 	"atomisu.com/ocg-statics/infoInsert/config"
+	"atomisu.com/ocg-statics/infoInsert/usecase/master"
 	"atomisu.com/ocg-statics/infoInsert/usecase/neon"
 	"atomisu.com/ocg-statics/infoInsert/usecase/neuron"
 	"atomisu.com/ocg-statics/infoInsert/usecase/tcgapi"
@@ -21,7 +22,7 @@ func SetupDIContainer() *do.Injector {
 	do.Provide(injector, neuron.NewNeuronUseCase)
 	do.Provide(injector, tcgapi.NewTcgUseCase)
 	do.Provide(injector, neon.NewNeonUseCase)
-	//do.Provide(injector, usecase.NewAuthUseCase)
+	do.Provide(injector, master.NewMasterUseCase)
 
 	// ハンドラー
 	//do.Provide(injector, handler.NewAccountHandler)
