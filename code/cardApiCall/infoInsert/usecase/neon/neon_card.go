@@ -3,14 +3,13 @@ package neon
 import (
 	"context"
 	"fmt"
-	"slices"
 	"strings"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 )
 
 func isMonsterCard(cardInfo cardrecord.StandardCard) bool {
-	return slices.Contains(cardInfo.TypeLines, "Monster")
+	return strings.Contains(cardInfo.Type, "Monster")
 }
 
 func isTrapCard(cardInfo cardrecord.StandardCard) bool {
