@@ -3,6 +3,8 @@ package cardrecord
 import (
 	"atomisu.com/ocg-statics/infoInsert/dto"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
+	"atomisu.com/ocg-statics/infoInsert/usecase/neuron"
+	"atomisu.com/ocg-statics/infoInsert/usecase/tcgapi"
 	"atomisu.com/ocg-statics/infoInsert/util"
 )
 
@@ -48,4 +50,28 @@ type AbstractCardSelectResult struct {
 	NameEn     string `db:"name_en" json:"nameEn"`
 	CardTextJa string `db:"card_text_ja" json:"cardTextJa"`
 	CardTextEn string `db:"card_text_en" json:"cardTextEn"`
+}
+
+func GenerateStandardCardFromNeuronAndTCGAPIResult(neuronExtractedData *neuron.NeuronExtractedData, tcgAPICard *tcgapi.TcgApiCard) StandardCard {
+	return StandardCard{
+		CardID:         neuronExtractedData.CardID,
+		DescEn:         neuronExtractedData.CardTextJa,
+		DescJa:         tcgAPICard.Desc,
+		NameEn:         tcgAPICard.Name,
+		NameJa:         neuronExtractedData.CardNameJa,
+		NeuronID:       neuronExtractedData.CardID,
+		TcgID:          tcgAPICard.ID,
+		Def:            tcgAPICard.Def,
+		Atk:            tcgAPICard.Atk,
+		Type:           tcgAPICard.Type,
+		Level:          tcgAPICard.Level,
+		Race:           tcgAPICard.Race,
+		LinkMarkers:    tcgAPICard.LinkMarkers,
+		Attribute:      tcgAPICard.Attribute,
+		LinkVal:        tcgAPICard.LinkVal,
+		TypeLines:      tcgAPICard.TypeLines,
+		PendulumScale:  tcgAPICard.Scale,
+		PendulumTextJa: neuronExtractedData.PendulumTextJa,
+		PendulumTextEn: tcgAPICard.PendulumText,
+	}
 }
