@@ -3,8 +3,6 @@ package cardrecord
 import (
 	"atomisu.com/ocg-statics/infoInsert/dto"
 	"atomisu.com/ocg-statics/infoInsert/sqlc_gen"
-	"atomisu.com/ocg-statics/infoInsert/usecase/neuron"
-	"atomisu.com/ocg-statics/infoInsert/usecase/tcgapi"
 	"atomisu.com/ocg-statics/infoInsert/util"
 )
 
@@ -52,11 +50,11 @@ type AbstractCardSelectResult struct {
 	CardTextEn string `db:"card_text_en" json:"cardTextEn"`
 }
 
-func GenerateStandardCardFromNeuronAndTCGAPIResult(neuronExtractedData *neuron.NeuronExtractedData, tcgAPICard *tcgapi.TcgApiCard) StandardCard {
+func GenerateStandardCardFromNeuronAndTCGAPIResult(neuronExtractedData *NeuronExtractedData, tcgAPICard *TcgApiCard) StandardCard {
 	return StandardCard{
 		CardID:         neuronExtractedData.CardID,
-		DescEn:         neuronExtractedData.CardTextJa,
-		DescJa:         tcgAPICard.Desc,
+		DescEn:         tcgAPICard.Desc,
+		DescJa:         neuronExtractedData.CardTextJa,
 		NameEn:         tcgAPICard.Name,
 		NameJa:         neuronExtractedData.CardNameJa,
 		NeuronID:       neuronExtractedData.CardID,
@@ -74,4 +72,32 @@ func GenerateStandardCardFromNeuronAndTCGAPIResult(neuronExtractedData *neuron.N
 		PendulumTextJa: neuronExtractedData.PendulumTextJa,
 		PendulumTextEn: tcgAPICard.PendulumText,
 	}
+}
+
+// NeuronExtractedData は、NeuronUseCaseの抽出データです。
+type NeuronExtractedData struct {
+	CardID         int64
+	CardNameEn     string
+	CardNameJa     string
+	CardTextJa     string
+	PendulumTextJa string
+}
+
+// TcgApiCard は、TcgApiUseCaseの抽出データです。
+type TcgApiCard struct {
+	Desc                  string   `json:"desc"`
+	Name                  string   `json:"name"`
+	ID                    int64    `json:"id"`
+	Def                   int32    `json:"def"`
+	Atk                   int32    `json:"atk"`
+	Type                  string   `json:"type"`
+	Level                 int32    `json:"level"`
+	Race                  string   `json:"race"`
+	LinkMarkers           []string `json:"linkMarkers"`
+	Attribute             string   `json:"attribute"`
+	LinkVal               int32    `json:"linkVal"`
+	TypeLines             []string `json:"typeline"`
+	HumanReadableCardType string   `json:"humanReadableCardType"`
+	Scale                 int32    `json:"scale"`
+	PendulumText          string   `json:"pendulumText"`
 }
