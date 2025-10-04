@@ -22,9 +22,11 @@ type TcgRest interface {
 
 // NewTCGRest is a constructor for TcgRest.
 func NewTCGRest() TcgRest {
+	logger, _ := zap.NewDevelopment()
+
 	return NewRest(func(r *restImpl) TcgRest {
 		return &tcgRestImpl{restImpl: r}
-	}, zap.NewExample())
+	}, logger)
 }
 
 // GetEnInfoByName is a method to get the English information of a card by name.

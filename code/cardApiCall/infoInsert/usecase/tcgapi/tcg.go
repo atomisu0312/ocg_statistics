@@ -22,8 +22,9 @@ type TcgApiCard struct {
 	LinkMarkers           []string `json:"linkMarkers"`
 	Attribute             string   `json:"attribute"`
 	LinkVal               int32    `json:"linkVal"`
-	TypeLines             []string `json:"typeLines"`
+	TypeLines             []string `json:"typeline"`
 	HumanReadableCardType string   `json:"humanReadableCardType"`
+	Scale                 int32    `json:"scale"`
 	PendulumText          string   `json:"pendulumText"`
 }
 
