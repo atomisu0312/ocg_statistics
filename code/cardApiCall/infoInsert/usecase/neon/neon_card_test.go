@@ -23,19 +23,19 @@ func TestInsertCardInfo(t *testing.T) {
 
 		// isMonsterCardのロジック (TypeLinesに"Monster"が含まれる) を満たすようにテストデータを作成
 		sampleData := cardrecord.StandardCard{
-			NameEn:      "Mokey Mokey",
-			NameJa:      "もけもけ",
-			DescEn:      "An outcast angel.",
-			DescJa:      "天使のはみだし者",
-			NeuronID:    6018,
-			TcgID:       27288416,
-			Def:         100,
-			Atk:         300,
-			Type:        "Normal Monster",
-			Level:       1,
-			Race:        "Fairy",
-			Attribute:   "LIGHT",
-			TypeLines:   []string{"Monster", "Normal"}, // "Monster" を追加
+			NameEn:    "Mokey Mokey",
+			NameJa:    "もけもけ",
+			DescEn:    "An outcast angel.",
+			DescJa:    "天使のはみだし者",
+			NeuronID:  6018,
+			TcgID:     27288416,
+			Def:       100,
+			Atk:       300,
+			Type:      "Normal Monster",
+			Level:     1,
+			Race:      "Fairy",
+			Attribute: "LIGHT",
+			TypeLines: []string{"Monster", "Normal"}, // "Monster" を追加
 		}
 
 		cardID, err := neonUseCase.InsertCardInfo(context.Background(), sampleData)
@@ -58,6 +58,11 @@ func TestInsertCardInfo(t *testing.T) {
 		assert.Error(t, err) // Should be an error (not found)
 		_, err = neonUseCase.GetTrapCardByID(context.Background(), cardID)
 		assert.Error(t, err) // Should be an error (not found)
+
+		cardPattern, err := neonUseCase.GetCardPatternByCardID(context.Background(), cardID)
+		assert.True(t, cardPattern.IsMonster)
+		assert.False(t, cardPattern.IsSpell)
+		assert.False(t, cardPattern.IsTrap)
 	})
 
 	t.Run("魔法カードが正しく挿入される", func(t *testing.T) {
@@ -89,6 +94,11 @@ func TestInsertCardInfo(t *testing.T) {
 		assert.NotNil(t, result)
 		assert.Equal(t, sampleData.NameEn, result.NameEn)
 		assert.Equal(t, "通常", result.SpellTypeNameJa)
+
+		cardPattern, err := neonUseCase.GetCardPatternByCardID(context.Background(), cardID)
+		assert.False(t, cardPattern.IsMonster)
+		assert.True(t, cardPattern.IsSpell)
+		assert.False(t, cardPattern.IsTrap)
 
 		// 他のテーブルに挿入されていないことを確認
 		_, err = neonUseCase.GetMonsterCardExtendedByID(context.Background(), cardID)
@@ -132,6 +142,11 @@ func TestInsertCardInfo(t *testing.T) {
 		assert.Error(t, err) // Should be an error (not found)
 		_, err = neonUseCase.GetSpellCardByID(context.Background(), cardID)
 		assert.Error(t, err) // Should be an error (not found)
+
+		cardPattern, err := neonUseCase.GetCardPatternByCardID(context.Background(), cardID)
+		assert.False(t, cardPattern.IsMonster)
+		assert.False(t, cardPattern.IsSpell)
+		assert.True(t, cardPattern.IsTrap)
 	})
 
 	t.Run("無効なカードタイプはエラーを返す", func(t *testing.T) {
@@ -144,9 +159,9 @@ func TestInsertCardInfo(t *testing.T) {
 
 		// どのタイプにも一致しないデータ
 		sampleData := cardrecord.StandardCard{
-			NameEn:   "Invalid Card",
-			NameJa:   "無効なカード",
-			Type:     "Invalid Type",
+			NameEn:    "Invalid Card",
+			NameJa:    "無効なカード",
+			Type:      "Invalid Type",
 			TypeLines: []string{"Invalid"},
 		}
 
