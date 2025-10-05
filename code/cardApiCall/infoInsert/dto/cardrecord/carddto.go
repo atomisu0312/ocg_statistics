@@ -101,3 +101,23 @@ type TcgApiCard struct {
 	Scale                 int32    `json:"scale"`
 	PendulumText          string   `json:"pendulumText"`
 }
+
+type CardPatternSelectResult struct {
+	CardID    int64 `db:"card_id" json:"cardId"`
+	NeuronID  int64 `db:"neuron_id" json:"neuronId"`
+	OcgApiID  int64 `db:"ocg_api_id" json:"ocgApiId"`
+	IsMonster bool  `db:"is_monster" json:"isMonster"`
+	IsSpell   bool  `db:"is_spell" json:"isSpell"`
+	IsTrap    bool  `db:"is_trap" json:"isTrap"`
+}
+
+func (c *CardPatternSelectResult) FromSelectCardPatternByCardIDRow(row sqlc_gen.SelectCardPatternByCardIDRow) *CardPatternSelectResult {
+	return &CardPatternSelectResult{
+		CardID:    row.CardID,
+		NeuronID:  row.NeuronID.Int64,
+		OcgApiID:  row.OcgApiID.Int64,
+		IsMonster: row.IsMonster,
+		IsSpell:   row.IsSpell,
+		IsTrap:    row.IsTrap,
+	}
+}

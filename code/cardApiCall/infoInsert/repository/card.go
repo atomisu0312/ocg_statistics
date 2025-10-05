@@ -15,6 +15,7 @@ type CardRepository interface {
 	InsertCard(ctx context.Context, arg sqlc_gen.InsertCardParams) (sqlc_gen.Card, error)
 	GetCardByNameEn(ctx context.Context, nameEn string) (sqlc_gen.Card, error)
 	GetCardByNameJa(ctx context.Context, nameJa string) (sqlc_gen.Card, error)
+	GetCardPatternByCardID(ctx context.Context, cardId int64) (sqlc_gen.SelectCardPatternByCardIDRow, error)
 }
 
 type cardRepositoryImpl struct {
@@ -86,4 +87,18 @@ func (r *cardRepositoryImpl) GetCardByNameJa(ctx context.Context, nameJa string)
 
 	r.logDBResult("GetCardByNameJa", card, zap.String("name_ja", nameJa))
 	return card, nil
+}
+
+func (r *cardRepositoryImpl) GetCardPatternByCardID(ctx context.Context, cardId int64) (sqlc_gen.SelectCardPatternByCardIDRow, error) {
+	start := time.Now()
+	defer r.logDBOperation("GetCardPatternByCardID", start, zap.Int64("card_id", cardId))
+
+	cardPattern, err := r.queries.SelectCardPatternByCardID(ctx, cardId)
+	if err != nil {
+		r.logDBError("GetCardPatternByCardID", err, zap.Int64("card_id", cardId))
+		return sqlc_gen.SelectCardPatternByCardIDRow{}, err
+	}
+
+	r.logDBResult("GetCardPatternByCardID", cardPattern, zap.Int64("card_id", cardId))
+	return cardPattern, nil
 }

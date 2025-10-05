@@ -218,6 +218,47 @@ func (q *Queries) SelectByCardNameJa(ctx context.Context, nameJa sql.NullString)
 	return i, err
 }
 
+const selectCardPatternByCardID = `-- name: SelectCardPatternByCardID :one
+WITH dummy AS (
+    SELECT $1::bigint as id
+)
+SELECT
+    dummy.id as card_id
+    ,card.neuron_id
+    ,card.ocg_api_id
+    ,exists (select 1 from monsters where monsters.card_id = dummy.id) as is_monster
+    ,exists (select 1 from spells where spells.card_id = dummy.id) as is_spell
+    ,exists (select 1 from traps where traps.card_id = dummy.id) as is_trap
+FROM
+    dummy
+LEFT JOIN
+    cards AS card
+    ON card.id = dummy.id
+`
+
+type SelectCardPatternByCardIDRow struct {
+	CardID    int64         `db:"card_id" json:"cardId"`
+	NeuronID  sql.NullInt64 `db:"neuron_id" json:"neuronId"`
+	OcgApiID  sql.NullInt64 `db:"ocg_api_id" json:"ocgApiId"`
+	IsMonster bool          `db:"is_monster" json:"isMonster"`
+	IsSpell   bool          `db:"is_spell" json:"isSpell"`
+	IsTrap    bool          `db:"is_trap" json:"isTrap"`
+}
+
+func (q *Queries) SelectCardPatternByCardID(ctx context.Context, dollar_1 int64) (SelectCardPatternByCardIDRow, error) {
+	row := q.db.QueryRowContext(ctx, selectCardPatternByCardID, dollar_1)
+	var i SelectCardPatternByCardIDRow
+	err := row.Scan(
+		&i.CardID,
+		&i.NeuronID,
+		&i.OcgApiID,
+		&i.IsMonster,
+		&i.IsSpell,
+		&i.IsTrap,
+	)
+	return i, err
+}
+
 const updateCard = `-- name: UpdateCard :one
 UPDATE cards
 SET

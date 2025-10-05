@@ -25,6 +25,7 @@ type NeonUseCase interface {
 	GetMonsterCardExtendedByID(ctx context.Context, cardID int64) (cardrecord.MonsterCardSelectResultExtended, error)
 	GetMonsterTypeLinesEnByCardID(ctx context.Context, cardID int64) ([]string, error)
 	InsertCardInfo(ctx context.Context, cardInfo cardrecord.StandardCard) (int64, error)
+	GetCardPatternByCardID(ctx context.Context, cardID int64) (cardrecord.CardPatternSelectResult, error)
 }
 
 // NewNeonUseCase は、NeonUseCaseのコンストラクタです。

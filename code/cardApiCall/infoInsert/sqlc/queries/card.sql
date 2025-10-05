@@ -48,3 +48,20 @@ WHERE name_en = $1;
 -- name: SelectByCardNameJa :one
 SELECT * FROM cards
 WHERE name_ja = $1;
+
+-- name: SelectCardPatternByCardID :one
+WITH dummy AS (
+    SELECT $1::bigint as id
+)
+SELECT
+    dummy.id as card_id
+    ,card.neuron_id
+    ,card.ocg_api_id
+    ,exists (select 1 from monsters where monsters.card_id = dummy.id) as is_monster
+    ,exists (select 1 from spells where spells.card_id = dummy.id) as is_spell
+    ,exists (select 1 from traps where traps.card_id = dummy.id) as is_trap
+FROM
+    dummy
+LEFT JOIN
+    cards AS card
+    ON card.id = dummy.id;
