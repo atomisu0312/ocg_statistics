@@ -34,13 +34,13 @@ func NewTcgUseCase(i *do.Injector) (TcgUseCase, error) {
 	})
 }
 
-var EmitChars = []string{"＃", "#", "<", ">", "&"}
+var OmitChars = []string{"＃", "#", "<", ">", "&"}
 
 func (t *tcgUseCaseImpl) GetCardInfoByEnName(ctx context.Context, name string) (cardrecord.TcgApiCard, error) {
 	tcgRest := http.NewTCGRest()
 
-	for _, emitChar := range EmitChars {
-		name = strings.ReplaceAll(name, emitChar, "")
+	for _, omitChar := range OmitChars {
+		name = strings.ReplaceAll(name, omitChar, "")
 	}
 
 	results, err := tcgRest.GetEnInfoByEnName(ctx, name)
