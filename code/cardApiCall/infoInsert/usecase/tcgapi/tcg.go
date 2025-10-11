@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/http"
@@ -33,8 +34,15 @@ func NewTcgUseCase(i *do.Injector) (TcgUseCase, error) {
 	})
 }
 
+var EmitChars = []string{"＃", "#", "<", ">", "&"}
+
 func (t *tcgUseCaseImpl) GetCardInfoByEnName(ctx context.Context, name string) (cardrecord.TcgApiCard, error) {
 	tcgRest := http.NewTCGRest()
+
+	for _, emitChar := range EmitChars {
+		name = strings.ReplaceAll(name, emitChar, "")
+	}
+
 	results, err := tcgRest.GetEnInfoByEnName(ctx, name)
 	if err != nil {
 		return cardrecord.TcgApiCard{}, err

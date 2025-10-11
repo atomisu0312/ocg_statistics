@@ -42,4 +42,24 @@ func TestTcgUseCase(t *testing.T) {
 		_, err := tcgUseCase.GetCardInfoByEnName(context.Background(), "Decode Tolker")
 		assert.Error(t, err)
 	})
+
+	t.Run("カード情報の取得テスト(砦を守る翼竜)_特殊文字が入る場合", func(t *testing.T) {
+		injector := app.SetupDIContainer()
+		do.Override(injector, config.TestDbConnection)
+
+		expected := map[string]string{
+			"id":   "87796900",
+			"name": "Winged Dragon, Guardian of the Fortress #1",
+			"desc": "A dragon commonly found guarding mountain fortresses. Its signature attack is a sweeping dive from out of the blue.",
+		}
+
+		tcgUseCase := do.MustInvoke[tcgapi.TcgUseCase](injector)
+
+		results, err := tcgUseCase.GetCardInfoByEnName(context.Background(), "Winged Dragon, Guardian of the Fortress #1")
+		assert.NoError(t, err)
+		assert.NotNil(t, results)
+		assert.Equal(t, expected["id"], strconv.FormatInt(results.ID, 10))
+		assert.Equal(t, expected["name"], results.Name)
+		assert.Equal(t, expected["desc"], results.Desc)
+	})
 }
