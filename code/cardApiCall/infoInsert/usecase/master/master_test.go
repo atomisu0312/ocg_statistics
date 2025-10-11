@@ -8,6 +8,7 @@ import (
 	"atomisu.com/ocg-statics/infoInsert/config"
 	"atomisu.com/ocg-statics/infoInsert/dto/cardrecord"
 	"atomisu.com/ocg-statics/infoInsert/usecase/master"
+	"atomisu.com/ocg-statics/infoInsert/usecase/neon"
 	"github.com/samber/do"
 	"github.com/stretchr/testify/assert"
 )
@@ -477,7 +478,7 @@ func TestInsertCardInfo(t *testing.T) {
 				NameEn:      "Majesty with Eyes of Blue",
 				NameJa:      "青き眼の威光",
 				NeuronID:    12587,
-				TcgID:       41420027,
+				TcgID:       2783661,
 				Atk:         0,
 				Type:        "Spell Card",
 				Race:        "Quick-Play",
@@ -533,20 +534,68 @@ func TestInsertCardInfo(t *testing.T) {
 			},
 		},
 	}
+	config.BeforeEachForUnitTest()
+	defer config.AfterEachForUnitTest()
 
 	for _, tc := range testCases {
 		t.Run("正常系: "+tc.card.NameJa, func(t *testing.T) {
 			t.Parallel()
-			config.BeforeEachForUnitTest()
-			defer config.AfterEachForUnitTest()
-
 			injector := app.SetupDIContainer()
 			do.Override(injector, config.TestDbConnection)
 			masterUseCase := do.MustInvoke[master.MasterUseCase](injector)
+			neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
 
 			cardID, err := masterUseCase.InsertCardInfo(context.Background(), tc.card.NeuronID)
 			assert.NoError(t, err)
 			assert.NotEqual(t, int64(0), cardID)
+
+			switch tc.card.Type {
+			case "Spell Card":
+				results, _ := neonUseCase.GetSpellCardByID(context.Background(), cardID)
+				assert.NotNil(t, results)
+				assert.Equal(t, tc.card.NameEn, results.NameEn)
+				assert.Equal(t, tc.card.NameJa, results.NameJa)
+				assert.Equal(t, tc.card.NeuronID, results.NeuronID)
+				assert.Equal(t, tc.card.TcgID, results.OcgApiID)
+				switch tc.card.Race {
+				case "Normal":
+					assert.Equal(t, "通常", results.SpellTypeNameJa)
+					assert.Equal(t, "Normal", results.SpellTypeNameEn)
+				case "Continuous":
+					assert.Equal(t, "永続", results.SpellTypeNameJa)
+					assert.Equal(t, "Continuous", results.SpellTypeNameEn)
+				case "Equip":
+					assert.Equal(t, "装備", results.SpellTypeNameJa)
+					assert.Equal(t, "Equip", results.SpellTypeNameEn)
+				case "Field":
+					assert.Equal(t, "フィールド", results.SpellTypeNameJa)
+					assert.Equal(t, "Field", results.SpellTypeNameEn)
+				case "Quick-Play":
+					assert.Equal(t, "速攻", results.SpellTypeNameJa)
+					assert.Equal(t, "Quick-Play", results.SpellTypeNameEn)
+				case "Ritual":
+					assert.Equal(t, "儀式", results.SpellTypeNameJa)
+					assert.Equal(t, "Ritual", results.SpellTypeNameEn)
+				}
+			case "Trap Card":
+				results, _ := neonUseCase.GetTrapCardByID(context.Background(), cardID)
+				assert.NotNil(t, results)
+				assert.Equal(t, tc.card.NameEn, results.NameEn)
+				assert.Equal(t, tc.card.NameJa, results.NameJa)
+				assert.Equal(t, tc.card.NeuronID, results.NeuronID)
+				assert.Equal(t, tc.card.TcgID, results.OcgApiID)
+				switch tc.card.Race {
+				case "Normal":
+					assert.Equal(t, "通常", results.TrapTypeNameJa)
+					assert.Equal(t, "Normal", results.TrapTypeNameEn)
+				case "Continuous":
+					assert.Equal(t, "永続", results.TrapTypeNameJa)
+					assert.Equal(t, "Continuous", results.TrapTypeNameEn)
+				case "Counter":
+					assert.Equal(t, "カウンター", results.TrapTypeNameJa)
+					assert.Equal(t, "Counter", results.TrapTypeNameEn)
+				}
+			}
 		})
 	}
 }
