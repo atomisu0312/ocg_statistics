@@ -1,0 +1,14 @@
+
+# Sample variable values for prepare_master_airflow module
+# Rename this file to terraform.tfvars for local development
+
+project          = "ocg-statistics"
+region           = "ap-northeast-1"
+tag_base         = "ocg-statistics-dev"
+mwaa_bucket_name = "sample-bucket"
+airflow_version = "2.10.3"
+internet_gateway_id = "igw-12345678901234567"
+private_subnet_cidrs = ["10.1.0.0/24","10.1.1.0/24"]
+public_subnet_cidrs = ["10.1.2.0/24","10.1.3.0/24"]
+vpc_id = "vpc-12345678901234567"
+webserver_access_mode = "PUBLIC_ONLY"
