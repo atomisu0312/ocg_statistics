@@ -41,6 +41,8 @@ func HandleRequest(ctx context.Context, event json.RawMessage) (Output, error) {
 	}
 
 	masterUseCase := do.MustInvoke[master.MasterUseCase](globalInjector)
+
+	// カード情報を挿入
 	failedIds, err := masterUseCase.InsertCardInfoList(ctx, input.StartId, input.Delta)
 	if err != nil {
 		return Output{}, err
