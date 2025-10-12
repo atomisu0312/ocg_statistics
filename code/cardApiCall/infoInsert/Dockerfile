@@ -6,7 +6,7 @@ WORKDIR /cardApiCall
 COPY go.mod go.sum ./
 RUN go mod download
 # Build with optional lambda.norpc tag
-COPY main.go .
+COPY . .
 RUN go build -tags lambda.norpc -o main main.go
 # Copy artifacts to a clean image
 FROM public.ecr.aws/lambda/provided:al2023

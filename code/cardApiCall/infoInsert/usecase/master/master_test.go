@@ -2,6 +2,7 @@ package master_test
 
 import (
 	"context"
+	"strconv"
 	"testing"
 
 	"atomisu.com/ocg-statics/infoInsert/app"
@@ -621,4 +622,48 @@ func TestInsertCardInfo(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, int64(0), cardID)
 	})
+}
+
+func TestInsertCardInfoListBad(t *testing.T) {
+	testCases := []struct {
+		startId int64
+		delta   int64
+	}{
+		{1, 4},
+	}
+	config.BeforeEachForUnitTest()
+	defer config.AfterEachForUnitTest()
+	injector := app.SetupDIContainer()
+	do.Override(injector, config.TestDbConnection)
+	masterUseCase := do.MustInvoke[master.MasterUseCase](injector)
+
+	for _, tc := range testCases {
+		t.Run("正常系: "+strconv.FormatInt(tc.startId, 10)+"-"+strconv.FormatInt(tc.startId+tc.delta, 10), func(t *testing.T) {
+			failedCardIDs, err := masterUseCase.InsertCardInfoList(context.Background(), tc.startId, tc.delta)
+			assert.NoError(t, err)
+			assert.ElementsMatch(t, []int64{1, 2, 3, 4}, failedCardIDs)
+		})
+	}
+}
+
+func TestInsertCardInfoListMixed(t *testing.T) {
+	testCases := []struct {
+		startId int64
+		delta   int64
+	}{
+		{4005, 10},
+	}
+	config.BeforeEachForUnitTest()
+	defer config.AfterEachForUnitTest()
+	injector := app.SetupDIContainer()
+	do.Override(injector, config.TestDbConnection)
+	masterUseCase := do.MustInvoke[master.MasterUseCase](injector)
+
+	for _, tc := range testCases {
+		t.Run("正常系: "+strconv.FormatInt(tc.startId, 10)+"-"+strconv.FormatInt(tc.startId+tc.delta, 10), func(t *testing.T) {
+			failedCardIDs, err := masterUseCase.InsertCardInfoList(context.Background(), tc.startId, tc.delta)
+			assert.NoError(t, err)
+			assert.ElementsMatch(t, []int64{4005, 4006}, failedCardIDs)
+		})
+	}
 }
