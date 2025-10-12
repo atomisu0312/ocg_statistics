@@ -64,33 +64,54 @@ func (m *masterUseCaseImpl) InsertCardInfoList(ctx context.Context, startId int6
 	return m.insertCardInfoListWithWorkers(ctx, startId, delta, maxWorkers)
 }
 
-// InsertCardInfoListWithWorkers は、指定されたワーカー数で並行処理を行います
+// insertCardInfoListWithWorkers は、指定されたワーカー数で並行処理を行います
 func (m *masterUseCaseImpl) insertCardInfoListWithWorkers(ctx context.Context, startId int64, delta int64, maxWorkers int) ([]int64, error) {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	failedCardIDs := []int64{}
-
-	// セマフォで並行度を制御
-	semaphore := make(chan struct{}, maxWorkers)
-
-	for neuronCardID := startId; neuronCardID < startId+delta; neuronCardID++ {
-		wg.Add(1)
-		go func(cardID int64) {
-			defer wg.Done()
-
-			// セマフォを取得（並行度制御）
-			semaphore <- struct{}{}
-			defer func() { <-semaphore }()
-
-			_, err := m.InsertCardInfo(ctx, cardID)
-			if err != nil {
-				mu.Lock()
-				failedCardIDs = append(failedCardIDs, cardID)
-				mu.Unlock()
-			}
-		}(neuronCardID)
+	if delta <= 0 {
+		return nil, nil
 	}
 
+	// Job channel に ID を流し、固定数のワーカーで処理する
+	jobs := make(chan int64)
+	results := make(chan int64)
+	var wg sync.WaitGroup
+
+	// ワーカー起動
+	for i := 0; i < maxWorkers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for cardID := range jobs {
+				if _, err := m.InsertCardInfo(ctx, cardID); err != nil {
+					// 失敗IDを results に出す
+					results <- cardID
+				}
+			}
+		}()
+	}
+
+	// ジョブ送信を別ゴルーチンで行い、終了後に jobs を閉じる
+	go func() {
+		defer close(jobs)
+		for id := startId; id < startId+delta; id++ {
+			jobs <- id
+		}
+	}()
+
+	// 結果（失敗したcardId）収集用ゴルーチン（閉じるタイミング管理）
+	var collectWg sync.WaitGroup
+	failed := []int64{}
+	collectWg.Add(1)
+	go func() {
+		defer collectWg.Done()
+		for id := range results {
+			failed = append(failed, id)
+		}
+	}()
+
+	// 全ワーカー完了後に results を閉じる
 	wg.Wait()
-	return failedCardIDs, nil
+	close(results)
+	collectWg.Wait()
+
+	return failed, nil
 }

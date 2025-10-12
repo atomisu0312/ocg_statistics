@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"atomisu.com/ocg-statics/infoInsert/app"
 	"atomisu.com/ocg-statics/infoInsert/usecase/master"
@@ -19,31 +20,36 @@ type Output struct {
 	FailedIds []int64 `json:"failedIds"`
 }
 
-func HandleRequest(ctx context.Context, event json.RawMessage) (string, error) {
+// DIコンテナはグローバルで1回だけ初期化（Lambda cold start を考慮）
+var (
+	globalInjector = app.SetupDIContainer()
+)
+
+func init() {
+	// 必要であればここでログやメトリクス初期化
+}
+
+func HandleRequest(ctx context.Context, event json.RawMessage) (Output, error) {
 	var input Input
 	if err := json.Unmarshal(event, &input); err != nil {
-		return "", err
+		return Output{}, err
 	}
 
-	injector := app.SetupDIContainer()
-	defer injector.Shutdown()
+	// 入力バリデーション
+	if input.Delta <= 0 {
+		return Output{}, fmt.Errorf("delta must be > 0")
+	}
 
-	masterUseCase := do.MustInvoke[master.MasterUseCase](injector)
-
+	masterUseCase := do.MustInvoke[master.MasterUseCase](globalInjector)
 	failedIds, err := masterUseCase.InsertCardInfoList(ctx, input.StartId, input.Delta)
 	if err != nil {
-		return "", err
+		return Output{}, err
 	}
 
-	output := Output{FailedIds: failedIds}
-	jsonBytes, err := json.Marshal(output)
-	if err != nil {
-		return "", err
-	}
-
-	return string(jsonBytes), nil
+	return Output{FailedIds: failedIds}, nil
 }
 
 func main() {
+	defer globalInjector.Shutdown()
 	lambda.Start(HandleRequest)
 }
