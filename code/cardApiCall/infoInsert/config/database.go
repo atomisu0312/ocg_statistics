@@ -11,7 +11,7 @@ import (
 )
 
 func NewDbConnection(i *do.Injector) (*DbConn, error) {
-	dbURI := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable",
+	dbURI := fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable",
 		env.GetAsString("PG_DB_USER", "postgres"),
 		env.GetAsString("PG_DB_PASSWORD", "postgres"),
 		env.GetAsString("PG_DB_HOST_PORT", "localhost:5555"),
