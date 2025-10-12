@@ -17,3 +17,8 @@ variable "image_uri" {
   description = "The URI of the ECR image for the Lambda function."
   type        = string
 }
+
+variable "environment" {
+  description = "The environment variables for the Lambda function."
+  type        = map(string)
+}
