@@ -38,3 +38,10 @@ module "ecr_idcheck" {
   repo_name = var.ecr_lambda_idcheck_repo_name
   tag_base                    = var.tag_base
 }
+
+module "ecr_cardinsert" {
+  source = "../../../modules/ecr/cardinsert"
+
+  repo_name = var.ecr_lambda_cardinsert_repo_name
+  tag_base                    = var.tag_base
+}

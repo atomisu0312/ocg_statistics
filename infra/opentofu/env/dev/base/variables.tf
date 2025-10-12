@@ -27,3 +27,8 @@ variable "ecr_lambda_idcheck_repo_name" {
   description = "The name of the ECR repository for the Lambda function."
   type        = string
 }
+
+variable "ecr_lambda_cardinsert_repo_name" {
+  description = "The name of the ECR repository for the Lambda function."
+  type        = string
+}
