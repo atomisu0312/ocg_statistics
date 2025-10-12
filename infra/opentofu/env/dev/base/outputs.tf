@@ -12,3 +12,8 @@ output "ecr_lambda_idcheck_repository_url" {
   description = "The URL of the ECR repository."
   value       = module.ecr_idcheck.ecr_repository_url
 }
+
+output "ecr_lambda_cardinsert_repository_url" {
+  description = "The URL of the ECR repository."
+  value       = module.ecr_cardinsert.ecr_repository_url
+}

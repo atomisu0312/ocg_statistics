@@ -27,6 +27,12 @@ variable "lambda_idcheck_name" {
   description = "The name of the Lambda function."
   type        = string
 }
+
+variable "lambda_cardinsert_name" {
+  description = "The name of the Lambda function."
+  type        = string
+}
+
 variable "parameter_current_id_name" {
   description = "The name of the SSM parameter."
   type        = string 

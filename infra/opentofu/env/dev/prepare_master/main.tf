@@ -20,6 +20,7 @@ locals {
   # Construct the full ECR image URI dynamically using the created repository's URL.
   image_uri_sample = "${data.terraform_remote_state.base.outputs.ecr_lambda_sample_repository_url}:${local.image_tag}"
   image_uri_idcheck = "${data.terraform_remote_state.base.outputs.ecr_lambda_idcheck_repository_url}:${local.image_tag}"
+  image_uri_cardinsert = "${data.terraform_remote_state.base.outputs.ecr_lambda_cardinsert_repository_url}:${local.image_tag}"
 }
 
 module "lambda_sample" {
@@ -38,6 +39,15 @@ module "lambda_idcheck" {
   tag_base = var.tag_base
   role_arn = data.terraform_remote_state.base.outputs.lambda_exec_role_arn
   image_uri = local.image_uri_idcheck
+}
+
+module "lambda_cardinsert" {
+  source = "../../../modules/lambda/cardinsert"
+
+  lambda_name = var.lambda_cardinsert_name
+  tag_base = var.tag_base
+  role_arn = data.terraform_remote_state.base.outputs.lambda_exec_role_arn
+  image_uri = local.image_uri_cardinsert
 }
 
 module "parameter_current_id" {
