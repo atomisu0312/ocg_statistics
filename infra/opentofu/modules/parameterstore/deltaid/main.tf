@@ -1,4 +1,4 @@
-resource "aws_ssm_parameter" "currentid" {
+resource "aws_ssm_parameter" "deltaid" {
   name  = var.parameter_name
   type  = "String"
   value = var.parameter_value
