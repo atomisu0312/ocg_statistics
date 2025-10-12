@@ -1,4 +1,5 @@
 #!/bin/bash
+set -Ceu
 
 # 環境変数を読み込む
 set -a

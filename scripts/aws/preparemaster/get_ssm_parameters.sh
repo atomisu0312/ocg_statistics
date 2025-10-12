@@ -1,4 +1,5 @@
 #!/bin/bash
+set -Ceu
 
 # This script retrieves specific parameters from AWS SSM Parameter Store.
 

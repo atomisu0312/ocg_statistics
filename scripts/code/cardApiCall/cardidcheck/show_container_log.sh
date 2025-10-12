@@ -1,4 +1,5 @@
 #!/bin/bash
+set -Ceu
 
 SERVICE_NAME=cardapicall_idcheck
 

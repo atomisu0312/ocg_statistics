@@ -1,4 +1,5 @@
 #!/bin/bash
+set -Ceu
 
 ARCHITECTURE=linux/amd64
 SECRET_FILE=act_secretfile

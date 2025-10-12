@@ -1,4 +1,5 @@
 #!/bin/bash
+set -Ceu
 
 echo "Initializing local Airflow"
 
