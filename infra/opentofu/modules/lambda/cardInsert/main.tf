@@ -4,8 +4,8 @@ resource "aws_lambda_function" "lambda_cardinsert" {
   role          = var.role_arn
   image_uri     = var.image_uri
 
-  memory_size   = 128
-  timeout       = 3
+  memory_size   = 1024
+  timeout       = 240
   architectures = ["arm64"]
 
   ephemeral_storage {
