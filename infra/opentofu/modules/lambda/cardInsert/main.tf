@@ -14,8 +14,10 @@ resource "aws_lambda_function" "lambda_cardinsert" {
   
   environment {
     variables = {
-      ENVIRONMENT = "production"
-      LOG_LEVEL   = "info"
+      PG_DB_USER = var.environment.PG_DB_USER
+      PG_DB_PASSWORD = var.environment.PG_DB_PASSWORD
+      PG_DB_HOST_PORT = var.environment.PG_DB_HOST_PORT
+      PG_DB_NAME = var.environment.PG_DB_NAME
     }
   }
 

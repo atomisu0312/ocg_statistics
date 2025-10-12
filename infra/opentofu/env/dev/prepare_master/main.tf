@@ -48,6 +48,12 @@ module "lambda_cardinsert" {
   tag_base = var.tag_base
   role_arn = data.terraform_remote_state.base.outputs.lambda_exec_role_arn
   image_uri = local.image_uri_cardinsert
+  environment = {
+    PG_DB_USER = var.lambda_cardinsert_env_pg_db_user
+    PG_DB_PASSWORD = var.lambda_cardinsert_env_pg_db_password
+    PG_DB_HOST_PORT = var.lambda_cardinsert_env_pg_db_host_port
+    PG_DB_NAME = var.lambda_cardinsert_env_pg_db_name
+  }
 }
 
 module "parameter_current_id" {

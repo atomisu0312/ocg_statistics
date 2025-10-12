@@ -33,6 +33,26 @@ variable "lambda_cardinsert_name" {
   type        = string
 }
 
+variable "lambda_cardinsert_env_pg_db_user" {
+  description = "The name of the Lambda function."
+  type        = string
+}
+
+variable "lambda_cardinsert_env_pg_db_password" {
+  description = "The name of the Lambda function."
+  type        = string
+}
+
+variable "lambda_cardinsert_env_pg_db_host_port" {
+  description = "The name of the Lambda function."
+  type        = string
+}
+
+variable "lambda_cardinsert_env_pg_db_name" {
+  description = "The name of the Lambda function."
+  type        = string
+}
+
 variable "parameter_current_id_name" {
   description = "The name of the SSM parameter."
   type        = string 
