@@ -1,4 +1,4 @@
-resource "aws_lambda_function" "lambda_idcheck" {
+resource "aws_lambda_function" "lambda_cardinsert" {
   function_name = var.lambda_name
   package_type  = "Image"
   role          = var.role_arn
