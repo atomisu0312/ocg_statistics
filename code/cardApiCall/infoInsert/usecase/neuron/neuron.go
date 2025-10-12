@@ -9,6 +9,7 @@ import (
 	"atomisu.com/ocg-statics/infoInsert/usecase"
 	"atomisu.com/ocg-statics/infoInsert/util"
 	"github.com/samber/do"
+	"go.uber.org/zap"
 )
 
 // neuronUseCaseImpl は、NeuronUseCaseの実装です。
@@ -31,6 +32,7 @@ func NewNeuronUseCase(i *do.Injector) (NeuronUseCase, error) {
 
 // GetCardInfo により、NeuronUseCaseを使ってカードの情報を取得する
 func (n *neuronUseCaseImpl) GetCardInfo(ctx context.Context, cardID int64) (cardrecord.NeuronExtractedData, error) {
+	logger, _ := zap.NewDevelopment()
 	htmlGetter := htmlget.NewNeuronHtmlGetter()
 	results, err := htmlGetter.VisitSite(ctx, fmt.Sprintf(htmlget.BASE_URL_FORMAT, cardID))
 
@@ -45,8 +47,10 @@ func (n *neuronUseCaseImpl) GetCardInfo(ctx context.Context, cardID int64) (card
 	pendulumTextJaParts := util.SplitByNewlinesAndTabs(results[htmlget.PendulumTextJa])
 
 	var cardNameJa, cardTextJa, pendulumTextJa string
-	if len(cardNameJaParts) > 0 {
+	if len(cardNameJaParts) > 1 {
 		cardNameJa = cardNameJaParts[1]
+	} else {
+		logger.Warn("Failed to get card info from neuron. Card may not exist.", zap.Int64("card_id", cardID))
 	}
 
 	if len(pendulumTextJaParts) > 0 {
@@ -54,9 +58,13 @@ func (n *neuronUseCaseImpl) GetCardInfo(ctx context.Context, cardID int64) (card
 	}
 
 	if pendulumTextJa == "" {
-		cardTextJa = cardTextJaParts[1]
+		if len(cardTextJaParts) > 1 {
+			cardTextJa = cardTextJaParts[1]
+		}
 	} else {
-		cardTextJa = cardTextJa2Parts[1]
+		if len(cardTextJa2Parts) > 1 {
+			cardTextJa = cardTextJa2Parts[1]
+		}
 	}
 
 	return cardrecord.NeuronExtractedData{

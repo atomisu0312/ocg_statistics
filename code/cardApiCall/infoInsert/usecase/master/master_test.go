@@ -536,15 +536,14 @@ func TestInsertCardInfo(t *testing.T) {
 	}
 	config.BeforeEachForUnitTest()
 	defer config.AfterEachForUnitTest()
+	injector := app.SetupDIContainer()
+	do.Override(injector, config.TestDbConnection)
+	masterUseCase := do.MustInvoke[master.MasterUseCase](injector)
+	neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
 
 	for _, tc := range testCases {
 		t.Run("正常系: "+tc.card.NameJa, func(t *testing.T) {
 			t.Parallel()
-			injector := app.SetupDIContainer()
-			do.Override(injector, config.TestDbConnection)
-			masterUseCase := do.MustInvoke[master.MasterUseCase](injector)
-			neonUseCase := do.MustInvoke[neon.NeonUseCase](injector)
-
 			cardID, err := masterUseCase.InsertCardInfo(context.Background(), tc.card.NeuronID)
 			assert.NoError(t, err)
 			assert.NotEqual(t, int64(0), cardID)
@@ -595,7 +594,31 @@ func TestInsertCardInfo(t *testing.T) {
 					assert.Equal(t, "カウンター", results.TrapTypeNameJa)
 					assert.Equal(t, "Counter", results.TrapTypeNameEn)
 				}
+			default:
+				monster, err := neonUseCase.GetMonsterCardExtendedByID(context.Background(), cardID)
+				assert.NotNil(t, monster)
+				assert.Equal(t, tc.card.NameEn, monster.NameEn)
+				assert.Equal(t, tc.card.NameJa, monster.NameJa)
+				assert.Equal(t, tc.card.NeuronID, monster.NeuronID)
+				assert.Equal(t, tc.card.TcgID, monster.OcgApiID)
+				typeLines, err := neonUseCase.GetMonsterTypeLinesEnByCardID(context.Background(), cardID)
+				assert.NoError(t, err)
+				assert.NotNil(t, typeLines)
+				assert.ElementsMatch(t, tc.card.TypeLines, typeLines)
+
 			}
 		})
 	}
+
+	t.Run("異常系_01: 存在しないカードID", func(t *testing.T) {
+		cardID, err := masterUseCase.InsertCardInfo(context.Background(), 1999999)
+		assert.Error(t, err)
+		assert.Equal(t, int64(0), cardID)
+	})
+
+	t.Run("異常系_02: 英字情報しか取得できないカード", func(t *testing.T) {
+		cardID, err := masterUseCase.InsertCardInfo(context.Background(), 21967)
+		assert.Error(t, err)
+		assert.Equal(t, int64(0), cardID)
+	})
 }
