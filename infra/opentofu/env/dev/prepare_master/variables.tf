@@ -73,4 +73,12 @@ variable "parameter_delta_id_value" {
   type        = string
 }
 
+variable "parameter_max_id_name" {
+  description = "The name of the SSM parameter."
+  type        = string 
+}
 
+variable "parameter_max_id_value" {
+  description = "The value of the SSM parameter."
+  type        = string
+}

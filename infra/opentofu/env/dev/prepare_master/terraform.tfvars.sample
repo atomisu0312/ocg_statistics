@@ -16,3 +16,5 @@ parameter_current_id_name = "/ocg-statistics-dev/currentid"
 parameter_current_id_value = "1" # 1
 parameter_delta_id_name = "/ocg-statistics-dev/deltaid"
 parameter_delta_id_value = "100" # 100
+parameter_max_id_name = "/ocg-statistics-dev/maxid"
+parameter_max_id_value = "50000" # 100
