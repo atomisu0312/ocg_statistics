@@ -72,3 +72,10 @@ module "parameter_delta_id" {
   tag_base = var.tag_base
 }
 
+module "parameter_max_id" {
+  source = "../../../modules/parameterstore/maxid"
+
+  parameter_name = var.parameter_max_id_name
+  parameter_value = var.parameter_max_id_value
+  tag_base = var.tag_base
+}
