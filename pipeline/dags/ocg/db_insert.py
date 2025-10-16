@@ -126,7 +126,7 @@ def _choose_branch_path(**kwargs):
 with DAG(
     dag_id="ocg_db_insert",
     start_date=airflow.utils.dates.days_ago(0),
-    schedule="*/10 * * * *",
+    schedule="0 5 * * *",
 ) as dag:
     start = EmptyOperator(task_id="start")
 
@@ -157,13 +157,15 @@ with DAG(
     
     update_id_task = _update_current_id()
     
-    # 依存関係を設定
-    invoke_lambda_function_task >> update_id_task
+    end_update_task = EmptyOperator(task_id="end_update_task", trigger_rule="one_success")
 
     start >> start_fetch_param >> [get_current_id_task, get_max_id_task, get_delta_id_task] >> end_fetch_param
     end_fetch_param >> choose_branch_path >> [invoke_lambda_function_task, alarm_excess_id_task]
-    update_id_task >> end
-    alarm_excess_id_task >> end
+    invoke_lambda_function_task >> update_id_task
+    
+    [update_id_task, alarm_excess_id_task] >> end_update_task
+    end_update_task >> end
+    
     
 # DAGオブジェクトを明示的に作成
 dag = dag
