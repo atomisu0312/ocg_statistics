@@ -14,7 +14,7 @@ from airflow.decorators import task, task_group
 @task(task_id="get_current_id_from_store")
 def _get_current_id_from_store():
     """
-    SSM Parameter Storeから値を取得する
+    SSM Parameter Storeから値を取得する。
     """
     ssm_path = os.environ.get('OCG_CURRENT_ID_SSM_PATH', 'invalid-ssm-path')
     ssm_hook = SsmHook(aws_conn_id='aws_default', region_name='ap-northeast-1')
